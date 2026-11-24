@@ -109,7 +109,8 @@ validate(input: unknown): Result<Incident, Issue[]>;
 ### 4.3 Layout (`packages/core`)
 
 `layout(incident)` returns the sequence diagram geometry (ADR 0003): `width`, `height`,
-`lanes: { entityId, x }[]` and `rows: { stepId, n, y, x1, x2 }[]`. Lanes follow the
+`laneWidth`, `top` and `bottom` (lifeline ends), `lanes: { entityId, x }[]` and
+`rows: { stepId, n, y, x1, x2 }[]`. Lanes follow the
 first appearance in steps, unused entities last. Fixed lane width and row height,
 integer numbers only.
 
