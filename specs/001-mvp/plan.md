@@ -144,7 +144,8 @@ It calls `validate()` first and refuses invalid input (FR-7).
 
 - `run(argv, io): Promise<number>` holds all logic. `io` has `readFile`, `writeFile`,
   `exists`, `out`, `err` and `today`. `bin.ts` connects it to real Node APIs. Tests use a fake `io`.
-- Error lines: `<file>: <path>: <message>` then `  fix: <fix>`.
+- Error lines: `<file>: <path>: <message>` then `  fix: <fix>`. Control characters in printed
+  text are replaced, so incident data cannot drive the terminal.
 - `validate <file...>`: exit 0 if all valid, 1 if any is invalid or unreadable. Bad JSON is
   reported at `(root)` with the parser's position.
 - `render <file> [-o <out>]`: default output is the input path with `.html`. Exit 1 on invalid input.

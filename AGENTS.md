@@ -43,6 +43,7 @@ randomness or Node built-ins in schema/core/render (render may use `node:crypto`
 ## Always
 - Keep core and render pure and deterministic.
 - Return `Result` types from core (see `packages/core/src/result.ts`). Don't throw.
+- Report problems as `Issue` objects `{ path, message, fix }` (`packages/core/src/issues.ts`).
 - Require a source URL for every incident step.
 - Give every custom schema rule an exact message and a `params.fix` hint (FR-5).
 - End relative imports in `.ts` and use only erasable TypeScript (no `enum`, `namespace`),

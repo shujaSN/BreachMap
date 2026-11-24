@@ -143,3 +143,4 @@ export const IncidentSchema = z.strictObject({
 });
 
 export type Incident = z.infer<typeof IncidentSchema>;
+export type SchemaIssue = z.core.$ZodIssue;
