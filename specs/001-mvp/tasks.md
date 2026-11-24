@@ -7,7 +7,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 ## Phase 0: Tooling
 
-- [ ] **T01** Workspace tooling: Node 26, Biome, Vitest + coverage, root `tsconfig.json`,
+- [x] **T01** Workspace tooling: Node 26, Biome, Vitest + coverage, root `tsconfig.json`,
   scripts `lint`, `typecheck`, `test`, `check`; rename root package to `breachmap-workspace`;
   fix the stack line in AGENTS.md. (NFR-8, ADR 0001)
 - [ ] **T02** Arch check `pnpm check:arch`: layer order, package boundaries, purity bans,

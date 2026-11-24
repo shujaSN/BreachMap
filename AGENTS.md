@@ -1,10 +1,12 @@
 # Breachmap
 
 Turns a security incident into a sourced, interactive attack map (one offline HTML file).
-Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest. ESM only.
+Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest, Biome. ESM only.
 
 ## Commands
+- Node 26 first: `nvm use`
 - Install: `pnpm install`
+- Lint and format (code and JSON, not Markdown): `pnpm lint`; auto-fix: `pnpm biome check --write .`
 - Full check, must pass before done: `pnpm check` (lint + typecheck + test + arch)
 - One test file: `pnpm vitest run <path/to/file.test.ts>`
 - One package: `pnpm --filter @breachmap/core test`

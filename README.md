@@ -11,9 +11,8 @@ pnpm install
 
 ## Scripts
 
+- `pnpm check`: lint, type-check and test everything
 - `pnpm build`: build all packages
-- `pnpm test`: run all tests
-- `pnpm typecheck`: type-check all packages
 
 ## License
 
