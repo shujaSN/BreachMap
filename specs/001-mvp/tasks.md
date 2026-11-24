@@ -23,7 +23,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 ## Phase 2: Core
 
 - [x] **T06** `Result` type and Zod issue → `{ path, message, fix }`. (FR-5)
-- [ ] **T07** Reference rules and `validate()`: duplicate IDs, unknown references,
+- [x] **T07** Reference rules and `validate()`: duplicate IDs, unknown references,
   unreferenced sources, no primary source. (FR-4, FR-6)
 - [ ] **T08** Fixtures: `valid.json`, `xss.json`, one `invalid/<rule>.json` per FR-4 rule,
   plus a table test. (AC1, AC3)

@@ -29,6 +29,7 @@ randomness or Node built-ins in schema/core/render (render may use `node:crypto`
 - `fixtures/valid.json`: a valid fictional incident shared by tests. Tests read fixtures with
   `readFileSync(new URL("../../../fixtures/…", import.meta.url))`, never a cross-package import.
 - `packages/core`: validation + layout. Pure: no fs, network, clock or randomness.
+  `validate(input)` is the one entry point: schema first, then reference rules (FR-4).
 - `packages/render`: JSON → HTML. Deterministic. See `packages/render/AGENTS.md`.
 - `packages/cli`: the only package allowed to do I/O.
 - Decisions: `docs/adr/`. Feature specs: `specs/NNN-name/`.
