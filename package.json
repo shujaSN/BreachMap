@@ -18,7 +18,8 @@
     "lint": "biome check .",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "check": "pnpm lint && pnpm typecheck && vitest run --coverage"
+    "check:arch": "node scripts/check-arch.ts",
+    "check": "pnpm lint && pnpm typecheck && vitest run --coverage && pnpm check:arch"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

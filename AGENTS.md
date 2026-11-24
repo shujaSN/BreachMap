@@ -13,7 +13,10 @@ Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest, Biome. ESM only.
 - Update snapshots, only when the output change is intended: `pnpm test -u`
 
 ## Architecture
-Dependency direction: cli → render → core → schema. Enforced by `pnpm check:arch`.
+Dependency direction: cli → render → core → schema. Enforced by `pnpm check:arch`
+(`scripts/check-arch.ts`): layer order, no relative imports across packages, no I/O, clock,
+randomness or Node built-ins in schema/core/render (render may use `node:crypto`), and no
+`innerHTML`-style APIs outside tests.
 - `packages/schema/src/incident.ts`: the incident contract. Read this first.
 - `packages/core`: validation + layout. Pure: no fs, network, clock or randomness.
 - `packages/render`: JSON → HTML. Deterministic. See `packages/render/AGENTS.md`.
@@ -31,6 +34,9 @@ Dependency direction: cli → render → core → schema. Enforced by `pnpm chec
 - Keep core and render pure and deterministic.
 - Return `Result` types from core (see `packages/core/src/result.ts`). Don't throw.
 - Require a source URL for every incident step.
+- End relative imports in `.ts` and use only erasable TypeScript (no `enum`, `namespace`),
+  so Node runs the sources directly (`node scripts/check-arch.ts`).
+- Put tests next to the code as `*.test.ts`.
 
 ## Ask first
 - Adding a dependency.

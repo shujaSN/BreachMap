@@ -10,7 +10,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [x] **T01** Workspace tooling: Node 26, Biome, Vitest + coverage, root `tsconfig.json`,
   scripts `lint`, `typecheck`, `test`, `check`; rename root package to `breachmap-workspace`;
   fix the stack line in AGENTS.md. (NFR-8, ADR 0001)
-- [ ] **T02** Arch check `pnpm check:arch`: layer order, package boundaries, purity bans,
+- [x] **T02** Arch check `pnpm check:arch`: layer order, package boundaries, purity bans,
   no `innerHTML` in render. Part of `pnpm check`. (NFR-1, NFR-3, AC9)
 - [ ] **T03** Hooks and permissions in `.claude/settings.json`. (plan 4.10)
 - [ ] **T04** Subagents: reviewer, security-auditor, test-writer. (plan 4.10)
