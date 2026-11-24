@@ -1,7 +1,7 @@
 # Breachmap
 
 Turns a security incident into a sourced, interactive attack map (one offline HTML file).
-Stack: Node 24, pnpm 10, TypeScript 5 (strict), Zod 4, Vitest. ESM only.
+Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest. ESM only.
 
 ## Commands
 - Install: `pnpm install`
