@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "id": "example-build-compromise-2024",
+  "title": "Example Corp build server compromise",
+  "summary": "An attacker phished an Example Corp engineer, signed in to the build server and added a backdoor to a release.",
+  "dates": {
+    "started": "2024-02",
+    "discovered": "2024-03-29",
+    "disclosed": null
+  },
+  "identifiers": {
+    "cve": ["CVE-2099-0001"]
+  },
+  "entities": [
+    {
+      "id": "example-group",
+      "name": "Example Threat Group",
+      "kind": "attacker"
+    },
+    {
+      "id": "example-corp",
+      "name": "Example Corp",
+      "kind": "victim"
+    },
+    {
+      "id": "build-server",
+      "name": "Example Corp build server",
+      "kind": "system"
+    }
+  ],
+  "steps": [
+    {
+      "id": "phishing-email",
+      "title": "Phishing email to an engineer",
+      "description": "The attacker sent an engineer a link to a fake login page and captured their password.",
+      "phase": "initial-access",
+      "techniqueId": "T1566.002",
+      "from": "example-group",
+      "to": "example-corp",
+      "confidence": "likely",
+      "sourceIds": ["example-advisory"]
+    },
+    {
+      "id": "build-server-login",
+      "title": "Login to the build server",
+      "description": "The attacker used the stolen password to sign in to the build server.",
+      "phase": "lateral-movement",
+      "from": "example-group",
+      "to": "build-server",
+      "confidence": "reported",
+      "sourceIds": ["example-news"]
+    },
+    {
+      "id": "tampered-release",
+      "title": "Backdoor added to the build script",
+      "description": "The build script was changed so that every new release included a backdoor.",
+      "phase": "persistence",
+      "from": "build-server",
+      "to": "build-server",
+      "confidence": "confirmed",
+      "sourceIds": ["example-vendor"]
+    }
+  ],
+  "impact": {
+    "description": "Customers who installed release 2.4.1 received the backdoored build.",
+    "sourceIds": ["example-vendor"]
+  },
+  "defenses": [
+    {
+      "id": "phishing-resistant-mfa",
+      "action": "Require phishing-resistant MFA for all engineer accounts.",
+      "stepIds": ["phishing-email", "build-server-login"],
+      "sourceIds": ["example-advisory"]
+    },
+    {
+      "id": "verify-builds",
+      "action": "Check that each release matches a reproducible build before publishing it.",
+      "stepIds": ["tampered-release"],
+      "sourceIds": ["example-vendor"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "example-advisory",
+      "url": "https://example.com/advisories/2024-001",
+      "title": "Security advisory: Example Corp build server compromise",
+      "publisher": "Example CERT",
+      "type": "advisory",
+      "retrievedAt": "2026-11-24"
+    },
+    {
+      "id": "example-vendor",
+      "url": "https://example.com/blog/incident-report",
+      "title": "Our incident report",
+      "publisher": "Example Corp",
+      "type": "vendor",
+      "retrievedAt": "2026-11-24"
+    },
+    {
+      "id": "example-news",
+      "url": "https://example.com/news/example-corp-breach",
+      "title": "Example Corp confirms build server breach",
+      "publisher": "Example News",
+      "type": "news",
+      "retrievedAt": "2026-11-24"
+    }
+  ],
+  "provenance": {
+    "createdBy": "skill",
+    "skillVersion": "0.1.0",
+    "createdAt": "2026-11-24",
+    "reviewedBy": "Example Reviewer"
+  }
+}

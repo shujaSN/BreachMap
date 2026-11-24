@@ -26,7 +26,9 @@ Dependency direction: cli → render → core → schema. Enforced by `pnpm chec
 randomness or Node built-ins in schema/core/render (render may use `node:crypto`), and no
 `innerHTML`-style APIs outside tests.
 - `packages/schema/src/incident.ts`: the incident contract. Read this first.
-- `fixtures/valid.json`: a valid fictional incident shared by tests. Tests read fixtures with
+- `fixtures/`: `valid.json` (valid fictional incident), `xss.json` (valid, hostile text for
+  escaping tests), `invalid/<rule>.json` (one per FR-4 rule; each file's expected issue is in
+  `packages/core/src/fixtures.test.ts`, and a new file without one fails). Tests read fixtures with
   `readFileSync(new URL("../../../fixtures/…", import.meta.url))`, never a cross-package import.
 - `packages/core`: validation + layout. Pure: no fs, network, clock or randomness.
   `validate(input)` is the one entry point: schema first, then reference rules (FR-4).
