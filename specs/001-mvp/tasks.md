@@ -17,7 +17,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 ## Phase 1: Schema
 
-- [ ] **T05** `@breachmap/schema`: Zod schema v1, `Incident` type, tactic list.
+- [x] **T05** `@breachmap/schema`: Zod schema v1, `Incident` type, tactic list.
   (FR-1, FR-2, FR-3, FR-4 shape and https rules, ADR 0002)
 
 ## Phase 2: Core

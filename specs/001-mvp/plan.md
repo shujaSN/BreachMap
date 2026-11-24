@@ -84,10 +84,11 @@ Follows FR-1 to FR-3. Our choices where the spec is open:
 - CVE: `^CVE-\d{4}-\d{4,}$`. Technique: `^T\d{4}(\.\d{3})?$`. Tactics: the 15 slugs in ADR 0002.
 - Text must contain a non-space character. Limits: summary 500 and step description 600
   (spec); titles 120, names 80, impact 600, defense action 300, source title 300, publisher 120.
-- At least 1 step, at least 1 defense, at least 2 sources.
+- At least 1 entity, 1 step, 1 defense and 2 sources. `identifiers.cve`, when present, has at least 1 item.
 - `impact` is one object: `{ description, sourceIds }`.
-- `skillVersion` (semver) is required when `createdBy` is `skill`.
-- URLs must be `https:`. This rule has its own message (FR-4).
+- `skillVersion` (`MAJOR.MINOR.PATCH`, no pre-release) is required when `createdBy` is `skill`.
+- URLs must be `https:` with no whitespace. This rule has its own message (FR-4).
+- Each custom rule has an exact message and a `params.fix` hint.
 
 ### 4.2 Validation (`packages/core`)
 
@@ -101,7 +102,7 @@ validate(input: unknown): Result<Incident, Issue[]>;
 - Pass 2: reference rules, in document order: duplicate IDs, unknown `from`/`to`/`sourceIds`/`stepIds`,
   source never referenced, no primary source.
 - `path` looks like `steps[3].sourceIds[0]`. The root is `(root)`.
-- `fix` comes from the issue kind: missing field, wrong type, too short or long, allowed
+- `fix` is the rule's `params.fix` when present, otherwise it comes from the issue kind: missing field, wrong type, too short or long, allowed
   values, unknown key, format with an example, or the broken reference rule.
 - The file name is added by the CLI (FR-5), since core does no I/O.
 
@@ -229,5 +230,5 @@ Shuja should confirm these:
    valid and shown as text.
 2. **Dates** can be less precise (`2019-09`), and `null` means unknown.
 3. **Schema limits** beyond the spec (section 4.1): strict objects, length limits on
-   short fields, and at least 1 step and 1 defense.
+   short fields, and at least 1 entity, 1 step and 1 defense.
 4. **`breachmap new`** creates a valid starter with `example.com` sources.

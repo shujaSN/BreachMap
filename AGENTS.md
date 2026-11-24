@@ -26,6 +26,8 @@ Dependency direction: cli → render → core → schema. Enforced by `pnpm chec
 randomness or Node built-ins in schema/core/render (render may use `node:crypto`), and no
 `innerHTML`-style APIs outside tests.
 - `packages/schema/src/incident.ts`: the incident contract. Read this first.
+- `fixtures/valid.json`: a valid fictional incident shared by tests. Tests read fixtures with
+  `readFileSync(new URL("../../../fixtures/…", import.meta.url))`, never a cross-package import.
 - `packages/core`: validation + layout. Pure: no fs, network, clock or randomness.
 - `packages/render`: JSON → HTML. Deterministic. See `packages/render/AGENTS.md`.
 - `packages/cli`: the only package allowed to do I/O.
@@ -42,6 +44,7 @@ randomness or Node built-ins in schema/core/render (render may use `node:crypto`
 - Keep core and render pure and deterministic.
 - Return `Result` types from core (see `packages/core/src/result.ts`). Don't throw.
 - Require a source URL for every incident step.
+- Give every custom schema rule an exact message and a `params.fix` hint (FR-5).
 - End relative imports in `.ts` and use only erasable TypeScript (no `enum`, `namespace`),
   so Node runs the sources directly (`node scripts/check-arch.ts`).
 - Put tests next to the code as `*.test.ts`.
