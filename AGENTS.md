@@ -12,11 +12,13 @@ Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest, Biome. ESM only.
 - One package: `pnpm --filter @breachmap/core test`
 - Update snapshots, only when the output change is intended: `pnpm test -u`
 
-## Claude Code hooks
+## Claude Code
 - `.claude/settings.json`: after each Edit/Write, Biome formats and lints the file
   (`.claude/hooks/format.sh`); on Stop with uncommitted changes, `pnpm check` runs and a
   failure sends Claude back once (`.claude/hooks/check.sh`).
 - `git push`, `npm publish` and `pnpm publish` always ask. `.env` files cannot be read.
+- Subagents in `.claude/agents/`: `test-writer` writes failing tests first for new logic,
+  `security-auditor` checks any render or skill change, `reviewer` reviews every diff before commit.
 
 ## Architecture
 Dependency direction: cli → render → core → schema. Enforced by `pnpm check:arch`

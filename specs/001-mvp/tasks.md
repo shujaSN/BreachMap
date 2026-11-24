@@ -13,7 +13,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [x] **T02** Arch check `pnpm check:arch`: layer order, package boundaries, purity bans,
   no `innerHTML` in render. Part of `pnpm check`. (NFR-1, NFR-3, AC9)
 - [x] **T03** Hooks and permissions in `.claude/settings.json`. (plan 4.10)
-- [ ] **T04** Subagents: reviewer, security-auditor, test-writer. (plan 4.10)
+- [x] **T04** Subagents: reviewer, security-auditor, test-writer. (plan 4.10)
 
 ## Phase 1: Schema
 
