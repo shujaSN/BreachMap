@@ -11,3 +11,4 @@
 - Never overcode any logic, always find way to write less code but quality code.
 - Never write more than 1 line comment anywhere in codebase.
 - Always write clean, simple, easy to understand, high quality, fast and optimized code.
+- Always keep the readme file short and very to the point.
