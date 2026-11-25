@@ -48,7 +48,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [x] **T18** `validate` command. (FR-13, FR-5, AC1)
 - [x] **T19** `render` command. (FR-14, FR-7)
 - [x] **T20** `new` command. (FR-15)
-- [ ] **T21** `bin.ts`, `pnpm breachmap`, esbuild bundle with `pnpm build`, spawn test. (FR-16, ADR 0001)
+- [x] **T21** `bin.ts`, `pnpm breachmap`, esbuild bundle with `pnpm build`, spawn test. (FR-16, ADR 0001)
 
 ## Phase 5: Skill, gallery, evals
 

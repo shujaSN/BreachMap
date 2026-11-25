@@ -1,9 +1,8 @@
 import { readFileSync } from "node:fs";
-import { type Issue, validate } from "@breachmap/core";
 import { render } from "@breachmap/render";
 import { describe, expect, it } from "vitest";
 import { fake, issuesOf, lines } from "./fake-io.ts";
-import { type Io, run } from "./main.ts";
+import { run } from "./main.ts";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const read = (name: string) =>

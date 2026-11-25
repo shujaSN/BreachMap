@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { fake, hasControl } from "./fake-io.ts";
-import { type Io, run } from "./main.ts";
+import { run } from "./main.ts";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 

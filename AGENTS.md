@@ -11,6 +11,9 @@ Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest, Biome. ESM only.
 - One test file: `pnpm vitest run <path/to/file.test.ts>`
 - One package: `pnpm --filter @breachmap/core test`
 - Update snapshots, only when the output change is intended: `pnpm test -u`
+- Run the CLI from source: `pnpm breachmap validate fixtures/valid.json` (also `render`, `new`)
+- Bundle the published CLI to `packages/cli/dist/cli.js`: `pnpm build`
+- `pnpm-workspace.yaml` sets `allowBuilds: esbuild: false`: no install scripts run; approve new ones only on purpose
 
 ## Claude Code
 - `.claude/settings.json`: after each Edit/Write, Biome formats and lints the file

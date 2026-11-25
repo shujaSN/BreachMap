@@ -1,8 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { type Issue, validate } from "@breachmap/core";
 import { describe, expect, it } from "vitest";
 import { fake, hasControl, issuesOf, lines } from "./fake-io.ts";
-import { type Io, run } from "./main.ts";
+import { run } from "./main.ts";
 
 const fixtures = new URL("../../../fixtures/", import.meta.url);
 const read = (name: string) => readFileSync(new URL(name, fixtures), "utf8");

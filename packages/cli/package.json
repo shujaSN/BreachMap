@@ -14,11 +14,13 @@
     "node": ">=22"
   },
   "scripts": {
+    "build": "esbuild src/bin.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/cli.js --banner:js=\"#!/usr/bin/env node\"",
     "test": "vitest run"
   },
   "devDependencies": {
     "@breachmap/core": "workspace:*",
     "@breachmap/render": "workspace:*",
-    "@breachmap/schema": "workspace:*"
+    "@breachmap/schema": "workspace:*",
+    "esbuild": "^0.28.2"
   }
 }

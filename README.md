@@ -12,7 +12,8 @@ pnpm install
 ## Scripts
 
 - `pnpm check`: lint, type-check and test everything
-- `pnpm build`: build all packages
+- `pnpm breachmap <command>`: run the CLI from source (`validate`, `render`, `new`)
+- `pnpm build`: bundle the CLI
 
 ## License
 

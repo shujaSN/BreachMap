@@ -2,7 +2,7 @@ import { validate } from "@breachmap/core";
 import type { Incident } from "@breachmap/schema";
 import { describe, expect, it } from "vitest";
 import { fake, TODAY } from "./fake-io.ts";
-import { type Io, run } from "./main.ts";
+import { run } from "./main.ts";
 
 const FILE = "my-incident.json";
 
