@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=&#39;; style-src &#39;sha256-N9J2FfRWWftjk2a+O45ZL3N7F+vAdwYN7wKwpf9DbxI=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Corp build server compromise · Breachmap</title>
+<style>body { margin: 0; font-family: system-ui, sans-serif; }</style>
+</head>
+<body>
+<header class="top">
+<p class="kicker">Breachmap attack map</p>
+<h1>Example Corp build server compromise</h1>
+<p class="summary">An attacker phished an Example Corp engineer, signed in to the build server and added a backdoor to a release.</p>
+<dl class="facts">
+<div><dt>Started</dt><dd>2024-02</dd></div>
+<div><dt>Discovered</dt><dd>2024-03-29</dd></div>
+<div><dt>Disclosed</dt><dd>Unknown</dd></div>
+<div><dt>CVE</dt><dd>CVE-2099-0001</dd></div>
+</dl>
+</header>
+<main>
+<section id="flow" aria-labelledby="flow-title">
+<h2 id="flow-title">Attack flow</h2>
+<ol class="steps">
+<li class="step" id="step-phishing-email" data-sources="src-example-advisory">
+<h3><span class="n">1</span> <bdi>Phishing email to an engineer</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1566/002/" rel="noopener noreferrer">T1566.002</a></p>
+<p class="actors"><bdi>Example Threat Group</bdi> → <bdi>Example Corp</bdi></p>
+<p>The attacker sent an engineer a link to a fake login page and captured their password.</p>
+<p class="cites">Sources: <a href="#src-example-advisory">[1]</a></p>
+</li>
+<li class="step" id="step-build-server-login" data-sources="src-example-news">
+<h3><span class="n">2</span> <bdi>Login to the build server</bdi></h3>
+<p class="meta"><span class="phase">Lateral Movement</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Example Threat Group</bdi> → <bdi>Example Corp build server</bdi></p>
+<p>The attacker used the stolen password to sign in to the build server.</p>
+<p class="cites">Sources: <a href="#src-example-news">[3]</a></p>
+</li>
+<li class="step" id="step-tampered-release" data-sources="src-example-vendor">
+<h3><span class="n">3</span> <bdi>Backdoor added to the build script</bdi></h3>
+<p class="meta"><span class="phase">Persistence</span></p>
+<p class="actors"><bdi>Example Corp build server</bdi> → <bdi>Example Corp build server</bdi></p>
+<p>The build script was changed so that every new release included a backdoor.</p>
+<p class="cites">Sources: <a href="#src-example-vendor">[2]</a></p>
+</li>
+</ol>
+</section>
+<section id="impact" aria-labelledby="impact-title">
+<h2 id="impact-title">Impact</h2>
+<p>Customers who installed release 2.4.1 received the backdoored build.</p>
+<p class="cites">Sources: <a href="#src-example-vendor">[2]</a></p>
+</section>
+<section id="defenses" aria-labelledby="defenses-title">
+<h2 id="defenses-title">Defenses</h2>
+<ul class="checklist">
+<li id="def-phishing-resistant-mfa"><label><input type="checkbox"> <span>Require phishing-resistant MFA for all engineer accounts.</span></label>
+<p class="cites">Addresses: <a href="#step-phishing-email">Step 1</a>, <a href="#step-build-server-login">Step 2</a> · Sources: <a href="#src-example-advisory">[1]</a></p></li>
+<li id="def-verify-builds"><label><input type="checkbox"> <span>Check that each release matches a reproducible build before publishing it.</span></label>
+<p class="cites">Addresses: <a href="#step-tampered-release">Step 3</a> · Sources: <a href="#src-example-vendor">[2]</a></p></li>
+</ul>
+</section>
+<section id="sources" aria-labelledby="sources-title">
+<h2 id="sources-title">Sources</h2>
+<ol class="sources">
+<li id="src-example-advisory"><a href="https://example.com/advisories/2024-001" rel="noopener noreferrer"><bdi>Security advisory: Example Corp build server compromise</bdi></a> <span class="source-meta"><bdi>Example CERT</bdi> · advisory · retrieved 2026-11-24</span></li>
+<li id="src-example-vendor"><a href="https://example.com/blog/incident-report" rel="noopener noreferrer"><bdi>Our incident report</bdi></a> <span class="source-meta"><bdi>Example Corp</bdi> · vendor · retrieved 2026-11-24</span></li>
+<li id="src-example-news"><a href="https://example.com/news/example-corp-breach" rel="noopener noreferrer"><bdi>Example Corp confirms build server breach</bdi></a> <span class="source-meta"><bdi>Example News</bdi> · news · retrieved 2026-11-24</span></li>
+</ol>
+</section>
+</main>
+<footer>
+<p>Schema version 1 · Created by the Breachmap skill 0.1.0 on 2026-11-24 · Reviewed by <bdi>Example Reviewer</bdi> · Made with Breachmap 0.1.0</p>
+</footer>
+<script>document.documentElement.classList.add("js");</script>
+</body>
+</html>
