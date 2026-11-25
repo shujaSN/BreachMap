@@ -59,7 +59,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [ ] **T25** 👤 Gallery: SolarWinds Orion / SUNBURST. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
 - [ ] **T26** 👤 Gallery: MOVEit Transfer. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
 - [ ] **T27** 👤 Gallery: GitHub MCP prompt-injection data leak. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
-- [ ] **T28** 👤 3 golden files in `evals/golden/`. (spec section 10)
+- [ ] **T28** 👤 3 golden files in `evals/golden/`. (spec section 10) Drafted from the gallery (xz, Log4Shell, MOVEit); waiting for Shuja to verify each and set `reviewedBy`.
 - [x] **T29** Eval scorer `pnpm eval:score` (E1, E2) and `eval-grader` subagent (E3, E4). (AC8)
 - [ ] **T30** 👤 Run evals and meet all E1 to E4 targets. (AC7, AC8)
 - [ ] **T31** 👤 Browser checks in Chrome, Firefox and Safari: offline, zero requests,
