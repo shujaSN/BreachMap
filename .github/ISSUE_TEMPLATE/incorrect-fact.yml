@@ -1,0 +1,33 @@
+name: Incorrect fact
+description: Report a wrong or unsupported claim in a gallery map.
+title: "Incorrect fact: "
+labels: [incorrect-fact]
+body:
+  - type: input
+    id: incident
+    attributes:
+      label: Incident id
+      description: The file name in gallery/incidents/, e.g. xz-backdoor-2024.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The step or field, e.g. "Step 4" or steps[3].description.
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong
+      description: Say what the map claims and what is correct. Do not paste exploit code.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: An https link to a page that shows the correct fact.
+    validations:
+      required: true
