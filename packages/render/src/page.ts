@@ -83,6 +83,7 @@ ${incident.identifiers && fact("CVE", incident.identifiers.cve.join(", "))}
 <main>
 <section id="flow" aria-labelledby="flow-title">
 <h2 id="flow-title">Attack flow</h2>
+<div class="controls" role="group" aria-label="Step navigation"><button type="button" id="nav-prev" aria-keyshortcuts="ArrowLeft">Previous step</button><span id="nav-status" aria-live="polite"></span><button type="button" id="nav-next" aria-keyshortcuts="ArrowRight">Next step</button><span class="hint">or use ← →</span></div>
 ${diagram(incident)}
 <ol class="steps">${incident.steps.map(step)}
 </ol>

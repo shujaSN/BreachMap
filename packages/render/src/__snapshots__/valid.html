@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=&#39;; style-src &#39;sha256-4xioDC8k2lvK/bDf31A8562mjTPAawaUb+/KE3EsJsg=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-Tz+vm3gFritNJm/bbNjZUfdk8AUsnvc+oIjDNo3Ms2A=&#39;; style-src &#39;sha256-fQ+IkBQak1A41tcEX6uA7qCH4YdBzxel/5DVFY4bZuQ=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="x-dns-prefetch-control" content="off">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,7 +40,7 @@ a{color:var(--accent)}
 .arrow[aria-current=step] circle,.arrow[aria-current=step] .step-n{fill:var(--accent)}
 .steps{list-style:none;margin:0;padding:0}
 .step{background:var(--card);border-left:4px solid transparent;border-radius:6px;margin:0 0 .75rem;padding:.75rem 1rem;scroll-margin:1rem}
-.step:target,.step[aria-current=step]{border-left-color:var(--accent)}
+html:not(.js) .step:target,.step[aria-current=step]{border-left-color:var(--accent)}
 .n{display:inline-block;min-width:1.7em;margin-right:.35rem;border-radius:999px;background:var(--accent);color:var(--bg);text-align:center;font-size:.85rem}
 .meta,.cites,.actors{margin:.25rem 0;color:var(--muted);font-size:.9rem}
 .technique{margin-left:.4rem}
@@ -53,12 +53,13 @@ a{color:var(--accent)}
 .checklist input{width:1.15rem;height:1.15rem;margin-top:.2rem;accent-color:var(--accent)}
 .sources{padding-left:1.5rem}
 .sources li{margin:0 0 .5rem;padding:.2rem .4rem;border-radius:4px;scroll-margin:1rem}
-.sources li:target,.sources li.hl{background:var(--accent-bg)}
+html:not(.js) .sources li:target,.sources li.hl{background:var(--accent-bg)}
 .source-meta{color:var(--muted);font-size:.9rem}
 .controls{display:none}
 .js .controls{display:flex;gap:.75rem;align-items:center}
 .controls button{font:inherit;padding:.35rem .9rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
 .controls button:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:.85rem}
 footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}</style>
 </head>
@@ -77,6 +78,7 @@ footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 <main>
 <section id="flow" aria-labelledby="flow-title">
 <h2 id="flow-title">Attack flow</h2>
+<div class="controls" role="group" aria-label="Step navigation"><button type="button" id="nav-prev" aria-keyshortcuts="ArrowLeft">Previous step</button><span id="nav-status" aria-live="polite"></span><button type="button" id="nav-next" aria-keyshortcuts="ArrowRight">Next step</button><span class="hint">or use ← →</span></div>
 <figure class="diagram">
 <svg viewBox="0 0 528 256" width="528" height="256" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: 3 steps between 3 entities</title>
 <defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>
@@ -138,6 +140,60 @@ footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
 <footer>
 <p>Schema version 1 · Created by the Breachmap skill 0.1.0 on 2026-11-24 · Reviewed by <bdi>Example Reviewer</bdi> · Made with Breachmap 0.1.0</p>
 </footer>
-<script>document.documentElement.classList.add("js");</script>
+<script>(function () {
+  var doc = document;
+  doc.documentElement.classList.add("js");
+  function all(selector) {
+    return Array.prototype.slice.call(doc.querySelectorAll(selector));
+  }
+  var steps = all("li.step");
+  var arrows = all("a.arrow");
+  var sources = all("ol.sources > li");
+  var status = doc.getElementById("nav-status");
+  var prev = doc.getElementById("nav-prev");
+  var next = doc.getElementById("nav-next");
+  var current = 0;
+  function indexOf(id) {
+    return steps.findIndex(function (s) { return s.id === id; });
+  }
+  function mark(el, on) {
+    if (on) el.setAttribute("aria-current", "step");
+    else el.removeAttribute("aria-current");
+  }
+  function select(i, scroll, focus) {
+    current = Math.max(0, Math.min(steps.length - 1, i));
+    var step = steps[current];
+    var cited = (step.getAttribute("data-sources") || "").split(" ");
+    steps.forEach(function (s) { mark(s, s === step); });
+    arrows.forEach(function (a) { mark(a, a.getAttribute("data-step") === step.id); });
+    sources.forEach(function (li) { li.classList.toggle("hl", cited.indexOf(li.id) !== -1); });
+    status.textContent = "Step " + (current + 1) + " of " + steps.length;
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length - 1;
+    if (focus) step.focus({ preventScroll: true });
+    if (scroll) step.scrollIntoView({ block: "nearest" });
+  }
+  steps.forEach(function (s, i) {
+    s.setAttribute("tabindex", "-1");
+    s.addEventListener("click", function () { select(i, false, false); });
+  });
+  prev.addEventListener("click", function () { select(current - 1, true, false); });
+  next.addEventListener("click", function () { select(current + 1, true, false); });
+  doc.addEventListener("click", function (e) {
+    var link = e.target.closest && e.target.closest("a[href^='#step-']");
+    var i = link ? indexOf(link.getAttribute("href").slice(1)) : -1;
+    if (i !== -1) select(i, false, false);
+  });
+  doc.addEventListener("keydown", function (e) {
+    var t = e.target;
+    var skip = t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest(".diagram")));
+    var delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!delta || skip || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    select(current + delta, true, true);
+  });
+  var start = indexOf(window.location.hash.slice(1));
+  select(start === -1 ? 0 : start, false, false);
+})();</script>
 </body>
 </html>

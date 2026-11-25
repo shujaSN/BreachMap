@@ -77,9 +77,9 @@ describe("CSS", () => {
     expect(css).toContain(".js .controls{display:flex");
   });
 
-  it("FR-9, FR-11: :target highlights a step and a source without JavaScript", () => {
-    expect(css).toContain(".step:target");
-    expect(css).toContain(".sources li:target");
+  it("FR-9, FR-11: :target highlights a step and a source only without JavaScript", () => {
+    expect(css).toContain("html:not(.js) .step:target,");
+    expect(css).toContain("html:not(.js) .sources li:target,");
   });
 
   it("NFR-1: loads nothing from the network", () => {
