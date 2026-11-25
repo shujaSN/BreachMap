@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-Tz+vm3gFritNJm/bbNjZUfdk8AUsnvc+oIjDNo3Ms2A=&#39;; style-src &#39;sha256-fQ+IkBQak1A41tcEX6uA7qCH4YdBzxel/5DVFY4bZuQ=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⁨SolarWinds Orion SUNBURST supply-chain compromise⁩ · Breachmap</title>
+<style>:root{color-scheme:light dark;--bg:#ffffff;--card:#f4f5f7;--fg:#1b1c1e;--muted:#4b4f56;--line:#767a80;--accent:#0b57d0;--accent-bg:#e3ecfb;--reported:#8a4b00;--disputed:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#121316;--card:#1d1f23;--fg:#e9eaec;--muted:#b4b8bf;--line:#8e939a;--accent:#8ab4f8;--accent-bg:#1e2a3f;--reported:#f2b866;--disputed:#f2a29b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
+header.top,main,footer{max-width:72rem;margin:0 auto;padding:1.5rem}
+h1{font-size:1.9rem;line-height:1.2;margin:.25rem 0 .75rem}
+h2{font-size:1.35rem;margin:2rem 0 1rem}
+h3{font-size:1.05rem;margin:0 0 .35rem}
+.kicker{margin:0;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.summary{max-width:60ch;font-size:1.1rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 2rem;margin:1rem 0 0}
+.facts dt{color:var(--muted);font-size:.8rem}
+.facts dd{margin:0;font-weight:600}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#flow{display:grid;gap:1rem 2rem}
+@media (min-width:60rem){#flow{grid-template-columns:minmax(0,max-content) minmax(22rem,1fr);align-items:start}#flow h2,#flow .controls{grid-column:1/-1}.diagram{position:sticky;top:1rem;max-height:calc(100vh - 2rem)}}
+.diagram{margin:0;overflow:auto;background:var(--card);border-radius:8px;padding:.5rem}
+.diagram svg{display:block}
+.lane-label{fill:var(--fg);font-size:13px;font-weight:600;text-anchor:middle}
+.lifeline{stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 5}
+.arrow line{stroke:var(--fg);stroke-width:2}
+.arrow circle{fill:var(--fg)}
+#arrowhead path{fill:var(--fg);fill:context-stroke}
+.arrow.reported line{stroke:var(--reported);stroke-dasharray:8 5}
+.arrow.reported circle{fill:var(--reported)}
+.arrow.disputed line{stroke:var(--disputed);stroke-dasharray:2 4}
+.arrow.disputed circle{fill:var(--disputed)}
+.step-n{fill:var(--fg);font-size:12px;font-weight:700;text-anchor:middle}
+.arrow[aria-current=step] line{stroke:var(--accent);stroke-width:4}
+.arrow[aria-current=step] circle,.arrow[aria-current=step] .step-n{fill:var(--accent)}
+.steps{list-style:none;margin:0;padding:0}
+.step{background:var(--card);border-left:4px solid transparent;border-radius:6px;margin:0 0 .75rem;padding:.75rem 1rem;scroll-margin:1rem}
+html:not(.js) .step:target,.step[aria-current=step]{border-left-color:var(--accent)}
+.n{display:inline-block;min-width:1.7em;margin-right:.35rem;border-radius:999px;background:var(--accent);color:var(--bg);text-align:center;font-size:.85rem}
+.meta,.cites,.actors{margin:.25rem 0;color:var(--muted);font-size:.9rem}
+.technique{margin-left:.4rem}
+.badge{margin-left:.4rem;padding:0 .4rem;border:1px solid currentColor;border-radius:4px;font-weight:600}
+.badge.reported{color:var(--reported)}
+.badge.disputed{color:var(--disputed)}
+.checklist{list-style:none;padding:0}
+.checklist li{margin:0 0 .75rem}
+.checklist label{display:flex;gap:.6rem;align-items:flex-start;font-weight:600}
+.checklist input{width:1.15rem;height:1.15rem;margin-top:.2rem;accent-color:var(--accent)}
+.sources{padding-left:1.5rem}
+.sources li{margin:0 0 .5rem;padding:.2rem .4rem;border-radius:4px;scroll-margin:1rem}
+html:not(.js) .sources li:target,.sources li.hl{background:var(--accent-bg)}
+.source-meta{color:var(--muted);font-size:.9rem}
+.controls{display:none}
+.js .controls{display:flex;gap:.75rem;align-items:center}
+.controls button{font:inherit;padding:.35rem .9rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+.controls button:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}</style>
+</head>
+<body>
+<header class="top">
+<p class="kicker">Breachmap attack map</p>
+<h1>SolarWinds Orion SUNBURST supply-chain compromise</h1>
+<p class="summary">Attackers broke into SolarWinds, planted a tool in its build system that slipped the SUNBURST backdoor into signed Orion updates, and used those updates to reach thousands of customer networks in 2020. In a small set of chosen targets they went on to forge sign-in tokens and read email in cloud services. In April 2021 the US government formally named Russia&#39;s foreign intelligence service (SVR) as responsible.</p>
+<dl class="facts">
+<div><dt>Started</dt><dd>2019-09</dd></div>
+<div><dt>Discovered</dt><dd>2020-12</dd></div>
+<div><dt>Disclosed</dt><dd>2020-12-13</dd></div>
+
+</dl>
+</header>
+<main>
+<section id="flow" aria-labelledby="flow-title">
+<h2 id="flow-title">Attack flow</h2>
+<div class="controls" role="group" aria-label="Step navigation"><button type="button" id="nav-prev" aria-keyshortcuts="ArrowLeft">Previous step</button><span id="nav-status" aria-live="polite"></span><button type="button" id="nav-next" aria-keyshortcuts="ArrowRight">Next step</button><span class="hint">or use ← →</span></div>
+<figure class="diagram">
+<svg viewBox="0 0 1008 648" width="1008" height="648" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: 10 steps between 6 entities</title>
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>
+<g class="lane"><title>Russian Foreign Intelligence Service (SVR), aka APT29</title><text class="lane-label" x="104" y="36">Russian Foreign Int…</text><line class="lifeline" x1="104" y1="64" x2="104" y2="624"></line></g>
+<g class="lane"><title>SolarWinds (maker of Orion)</title><text class="lane-label" x="264" y="36">SolarWinds (maker o…</text><line class="lifeline" x1="264" y1="64" x2="264" y2="624"></line></g>
+<g class="lane"><title>SolarWinds Orion build system</title><text class="lane-label" x="424" y="36">SolarWinds Orion bu…</text><line class="lifeline" x1="424" y1="64" x2="424" y2="624"></line></g>
+<g class="lane"><title>Customer Orion servers</title><text class="lane-label" x="584" y="36">Customer Orion serv…</text><line class="lifeline" x1="584" y1="64" x2="584" y2="624"></line></g>
+<g class="lane"><title>Customer and government networks</title><text class="lane-label" x="744" y="36">Customer and govern…</text><line class="lifeline" x1="744" y1="64" x2="744" y2="624"></line></g>
+<g class="lane"><title>Cloud identity and email (SAML, Microsoft 365)</title><text class="lane-label" x="904" y="36">Cloud identity and …</text><line class="lifeline" x1="904" y1="64" x2="904" y2="624"></line></g>
+<a class="arrow confirmed" href="#step-solarwinds-intrusion" data-step="step-solarwinds-intrusion" tabindex="-1"><title>Step 1: ⁨Attackers get into SolarWinds&#39; internal network⁩</title><line x1="104" y1="92" x2="264" y2="92" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="84">1</text></a>
+<a class="arrow confirmed" href="#step-sunspot-build-tampering" data-step="step-sunspot-build-tampering" tabindex="-1"><title>Step 2: ⁨SUNSPOT injects the backdoor during Orion builds⁩</title><line x1="104" y1="148" x2="424" y2="148" marker-end="url(#arrowhead)"></line><text class="step-n" x="264" y="140">2</text></a>
+<a class="arrow confirmed" href="#step-signed-trojanized-updates" data-step="step-signed-trojanized-updates" tabindex="-1"><title>Step 3: ⁨Signed, backdoored Orion updates reach customers⁩</title><line x1="424" y1="204" x2="584" y2="204" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="196">3</text></a>
+<a class="arrow reported" href="#step-backdoor-hides" data-step="step-backdoor-hides" tabindex="-1"><title>Step 4: ⁨The backdoor waits and hides from defenders⁩ (reported)</title><circle cx="584" cy="260" r="6"></circle><text class="step-n" x="598" y="252">4</text></a>
+<a class="arrow confirmed" href="#step-dns-c2-selection" data-step="step-dns-c2-selection" tabindex="-1"><title>Step 5: ⁨SUNBURST calls home and the attackers pick targets⁩</title><line x1="584" y1="316" x2="104" y2="316" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="308">5</text></a>
+<a class="arrow confirmed" href="#step-other-entry-points" data-step="step-other-entry-points" tabindex="-1"><title>Step 6: ⁨Other ways in besides Orion⁩</title><line x1="104" y1="372" x2="744" y2="372" marker-end="url(#arrowhead)"></line><text class="step-n" x="424" y="364">6</text></a>
+<a class="arrow reported" href="#step-hands-on-activity" data-step="step-hands-on-activity" tabindex="-1"><title>Step 7: ⁨Second-stage tools and quiet lateral movement⁩ (reported)</title><line x1="104" y1="428" x2="744" y2="428" marker-end="url(#arrowhead)"></line><text class="step-n" x="424" y="420">7</text></a>
+<a class="arrow confirmed" href="#step-saml-token-forgery" data-step="step-saml-token-forgery" tabindex="-1"><title>Step 8: ⁨Stealing the SAML signing key to forge sign-ins⁩</title><line x1="744" y1="484" x2="904" y2="484" marker-end="url(#arrowhead)"></line><text class="step-n" x="824" y="476">8</text></a>
+<a class="arrow confirmed" href="#step-cloud-persistence" data-step="step-cloud-persistence" tabindex="-1"><title>Step 9: ⁨Extra keys added in Microsoft cloud identity⁩</title><line x1="104" y1="540" x2="904" y2="540" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="532">9</text></a>
+<a class="arrow confirmed" href="#step-email-collection" data-step="step-email-collection" tabindex="-1"><title>Step 10: ⁨Reading and taking email through approved APIs⁩</title><line x1="904" y1="596" x2="104" y2="596" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="588">10</text></a>
+</svg>
+</figure>
+<ol class="steps">
+<li class="step" id="step-solarwinds-intrusion" data-sources="src-solarwinds-new-findings src-whitehouse-fact-sheet">
+<h3><span class="n">1</span> <bdi>Attackers get into SolarWinds&#39; internal network</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span></p>
+<p class="actors"><bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi> → <bdi>SolarWinds (maker of Orion)</bdi></p>
+<p>SolarWinds&#39; own investigation traced the first suspicious activity on its internal systems to September 2019. An Orion release in October 2019 carried small test changes, which SolarWinds sees as the attackers checking whether they could slip code into its builds. The cited sources do not say how the attackers first got in. In April 2021 the US government formally named Russia&#39;s foreign intelligence service (SVR, also called APT29) as the actor, with high confidence.</p>
+<p class="cites">Sources: <a href="#src-solarwinds-new-findings">[4]</a> <a href="#src-whitehouse-fact-sheet">[6]</a></p>
+</li>
+<li class="step" id="step-sunspot-build-tampering" data-sources="src-solarwinds-new-findings src-solarwinds-advisory src-crowdstrike-sunspot">
+<h3><span class="n">2</span> <bdi>SUNSPOT injects the backdoor during Orion builds</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1195/002/" rel="noopener noreferrer">T1195.002</a></p>
+<p class="actors"><bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi> → <bdi>SolarWinds Orion build system</bdi></p>
+<p>From February 2020 the attackers ran a tool, later named SUNSPOT, on the SolarWinds build system. It waited for Orion to be compiled, swapped one source file for a backdoored copy just before the compiler read it, and put the original back when the build ended. It checked file hashes first so a broken build would not give it away, which helped it stay hidden from the developers and build team.</p>
+<p class="cites">Sources: <a href="#src-solarwinds-new-findings">[4]</a> <a href="#src-solarwinds-advisory">[3]</a> <a href="#src-crowdstrike-sunspot">[9]</a></p>
+</li>
+<li class="step" id="step-signed-trojanized-updates" data-sources="src-cisa-aa20-352a src-solarwinds-advisory src-microsoft-solorigate src-mandiant-sunburst">
+<h3><span class="n">3</span> <bdi>Signed, backdoored Orion updates reach customers</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span></p>
+<p class="actors"><bdi>SolarWinds Orion build system</bdi> → <bdi>Customer Orion servers</bdi></p>
+<p>Because the code was added before the final build steps, the tampered Orion library (SolarWinds.Orion.Core.BusinessLayer.dll) was signed with SolarWinds&#39; real code-signing certificate. CISA lists the affected releases as Orion 2019.4 HF5, 2020.2 RC1, 2020.2 RC2, 2020.2 and 2020.2 HF1, posted to SolarWinds&#39; update site in spring 2020. Customers installed them as normal updates, and the backdoor, called SUNBURST, loaded inside the regular Orion service.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa20-352a">[1]</a> <a href="#src-solarwinds-advisory">[3]</a> <a href="#src-microsoft-solorigate">[8]</a> <a href="#src-mandiant-sunburst">[7]</a></p>
+</li>
+<li class="step" id="step-backdoor-hides" data-sources="src-mandiant-sunburst src-microsoft-solorigate src-cisa-aa20-352a">
+<h3><span class="n">4</span> <bdi>The backdoor waits and hides from defenders</bdi></h3>
+<p class="meta"><span class="phase">Stealth</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Customer Orion servers</bdi> → <bdi>Customer Orion servers</bdi></p>
+<p>After install, SUNBURST stayed quiet for roughly 12 to 14 days. It held back if it found itself in a test or analysis setup or saw certain security and forensic tools, and it added random delays between check-ins. Its code used ordinary-sounding names and hidden text strings so it looked like normal Orion code. Mandiant also reported that commands were tucked inside normal-looking data in server replies; CISA said it had not confirmed that part itself.</p>
+<p class="cites">Sources: <a href="#src-mandiant-sunburst">[7]</a> <a href="#src-microsoft-solorigate">[8]</a> <a href="#src-cisa-aa20-352a">[1]</a></p>
+</li>
+<li class="step" id="step-dns-c2-selection" data-sources="src-cisa-aa20-352a src-mandiant-sunburst">
+<h3><span class="n">5</span> <bdi>SUNBURST calls home and the attackers pick targets</bdi></h3>
+<p class="meta"><span class="phase">Command and Control</span> <a class="technique" href="https://attack.mitre.org/techniques/T1071/004/" rel="noopener noreferrer">T1071.004</a></p>
+<p class="actors"><bdi>Customer Orion servers</bdi> → <bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi></p>
+<p>Each infected server contacted its own subdomain of avsvmcloud[.]com, with traffic made to look like normal SolarWinds product traffic. The attackers used the DNS replies to choose which victims to pursue: chosen ones were sent new addresses for hands-on control, while many others got no follow-up. The control servers often used addresses in the victim&#39;s own country, and Mandiant reported hostnames copied from the victim&#39;s network.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa20-352a">[1]</a> <a href="#src-mandiant-sunburst">[7]</a></p>
+</li>
+<li class="step" id="step-other-entry-points" data-sources="src-cisa-aa20-352a src-cisa-ed-21-01">
+<h3><span class="n">6</span> <bdi>Other ways in besides Orion</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span></p>
+<p class="actors"><bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi> → <bdi>Customer and government networks</bdi></p>
+<p>CISA found the same actor inside some networks that had no Orion exposure. In some cases it got in by guessing or spraying passwords, or by using weakly protected admin credentials on remote access services. CISA warned that more entry methods were likely still unknown, so removing Orion alone was not enough.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa20-352a">[1]</a> <a href="#src-cisa-ed-21-01">[2]</a></p>
+</li>
+<li class="step" id="step-hands-on-activity" data-sources="src-mandiant-sunburst src-microsoft-solorigate">
+<h3><span class="n">7</span> <bdi>Second-stage tools and quiet lateral movement</bdi></h3>
+<p class="meta"><span class="phase">Lateral Movement</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi> → <bdi>Customer and government networks</bdi></p>
+<p>On selected victims the attackers loaded follow-on tools, including a memory-only dropper Mandiant named TEARDROP that in at least one case launched a customized Cobalt Strike Beacon. They moved between machines with credentials different from the ones used to get in, renamed admin tools, and briefly swapped legitimate utilities or scheduled tasks for their own before putting the originals back.</p>
+<p class="cites">Sources: <a href="#src-mandiant-sunburst">[7]</a> <a href="#src-microsoft-solorigate">[8]</a></p>
+</li>
+<li class="step" id="step-saml-token-forgery" data-sources="src-cisa-aa20-352a src-microsoft-solorigate">
+<h3><span class="n">8</span> <bdi>Stealing the SAML signing key to forge sign-ins</bdi></h3>
+<p class="meta"><span class="phase">Credential Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1606/002/" rel="noopener noreferrer">T1606.002</a></p>
+<p class="actors"><bdi>Customer and government networks</bdi> → <bdi>Cloud identity and email (SAML, Microsoft 365)</bdi></p>
+<p>With high Active Directory privileges, the attackers took the certificate used to sign SAML sign-in tokens. They then made valid-looking tokens for services that trust that identity system, such as hosted email and file storage. CISA noted the actor relied heavily on stolen or forged tokens to move around.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa20-352a">[1]</a> <a href="#src-microsoft-solorigate">[8]</a></p>
+</li>
+<li class="step" id="step-cloud-persistence" data-sources="src-cisa-aa20-352a">
+<h3><span class="n">9</span> <bdi>Extra keys added in Microsoft cloud identity</bdi></h3>
+<p class="meta"><span class="phase">Persistence</span> <a class="technique" href="https://attack.mitre.org/techniques/T1098/001/" rel="noopener noreferrer">T1098.001</a></p>
+<p class="actors"><bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi> → <bdi>Cloud identity and email (SAML, Microsoft 365)</bdi></p>
+<p>In Azure AD and Microsoft 365, the attackers added their own tokens and certificates to existing application service principals, giving them lasting, programmatic access through the Microsoft Graph API. They also added new federation trusts, which could keep their access alive.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa20-352a">[1]</a></p>
+</li>
+<li class="step" id="step-email-collection" data-sources="src-cisa-aa20-352a">
+<h3><span class="n">10</span> <bdi>Reading and taking email through approved APIs</bdi></h3>
+<p class="meta"><span class="phase">Collection</span> <a class="technique" href="https://attack.mitre.org/techniques/T1114/002/" rel="noopener noreferrer">T1114.002</a></p>
+<p class="actors"><bdi>Cloud identity and email (SAML, Microsoft 365)</bdi> → <bdi>Russian Foreign Intelligence Service (SVR), aka APT29</bdi></p>
+<p>The attackers went after the mailboxes of key staff, including IT and incident response people, and pulled data out through authorized cloud APIs.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa20-352a">[1]</a></p>
+</li>
+</ol>
+</section>
+<section id="impact" aria-labelledby="impact-title">
+<h2 id="impact-title">Impact</h2>
+<p>About 18,000 public and private sector Orion customers were affected, but US agencies said only a much smaller number saw follow-on intrusions, including fewer than ten US government agencies identified by January 2021. They believed the goal was intelligence gathering. According to the White House, the access could have let the SVR watch, and possibly disrupt, over 16,000 systems around the world. Mandiant reported victims in government, consulting, technology, telecom and extractive industries across several regions.</p>
+<p class="cites">Sources: <a href="#src-joint-statement-2021">[5]</a> <a href="#src-whitehouse-fact-sheet">[6]</a> <a href="#src-mandiant-sunburst">[7]</a></p>
+</section>
+<section id="defenses" aria-labelledby="defenses-title">
+<h2 id="defenses-title">Defenses</h2>
+<ul class="checklist">
+<li id="def-watch-build-systems"><label><input type="checkbox"> <span>Watch build servers for unexpected scheduled tasks, processes reading the compiler&#39;s memory, and source files that change while a build runs, so injected code is caught before a release ships.</span></label>
+<p class="cites">Addresses: <a href="#step-sunspot-build-tampering">Step 2</a> · Sources: <a href="#src-crowdstrike-sunspot">[9]</a></p></li>
+<li id="def-isolate-orion"><label><input type="checkbox"> <span>Image affected Orion servers for forensics, then disconnect or power them down, block their traffic to and from the internet, and rebuild them from trusted sources instead of only patching in place.</span></label>
+<p class="cites">Addresses: <a href="#step-signed-trojanized-updates">Step 3</a>, <a href="#step-dns-c2-selection">Step 5</a> · Sources: <a href="#src-cisa-ed-21-01">[2]</a> <a href="#src-cisa-aa20-352a">[1]</a></p></li>
+<li id="def-upgrade-orion"><label><input type="checkbox"> <span>Run only a clean Orion release named by SolarWinds; its April 2021 advisory pointed to 2020.2.5 or 2019.4.2, and CISA required at least 2020.2.1 HF2 for continued use.</span></label>
+<p class="cites">Addresses: <a href="#step-signed-trojanized-updates">Step 3</a> · Sources: <a href="#src-solarwinds-advisory">[3]</a> <a href="#src-cisa-ed-21-01">[2]</a></p></li>
+<li id="def-limit-orion-reach"><label><input type="checkbox"> <span>Give monitoring servers like Orion only the privileges they need, block their direct internet access, and keep their admin rights away from top-tier systems.</span></label>
+<p class="cites">Addresses: <a href="#step-dns-c2-selection">Step 5</a>, <a href="#step-hands-on-activity">Step 7</a> · Sources: <a href="#src-mandiant-sunburst">[7]</a> <a href="#src-cisa-aa20-352a">[1]</a></p></li>
+<li id="def-reset-credentials"><label><input type="checkbox"> <span>Reset every credential Orion used or stored, fix accounts open to Kerberoasting, and reset the KRBTGT password twice.</span></label>
+<p class="cites">Addresses: <a href="#step-hands-on-activity">Step 7</a>, <a href="#step-saml-token-forgery">Step 8</a> · Sources: <a href="#src-cisa-ed-21-01">[2]</a> <a href="#src-cisa-aa20-352a">[1]</a></p></li>
+<li id="def-rebuild-identity-trust"><label><input type="checkbox"> <span>If admin credentials or SAML signing were abused, treat the whole identity trust store as compromised, rebuild identity services, and remove any accounts and persistence the attacker added.</span></label>
+<p class="cites">Addresses: <a href="#step-saml-token-forgery">Step 8</a>, <a href="#step-cloud-persistence">Step 9</a> · Sources: <a href="#src-cisa-aa20-352a">[1]</a></p></li>
+<li id="def-hunt-token-abuse"><label><input type="checkbox"> <span>Hunt sign-in logs for impossible travel, SAML tokens with odd lifetimes or timestamps, and unusual MFA claims, and keep host, cloud and network logs centrally for at least 180 days.</span></label>
+<p class="cites">Addresses: <a href="#step-saml-token-forgery">Step 8</a>, <a href="#step-email-collection">Step 10</a>, <a href="#step-other-entry-points">Step 6</a> · Sources: <a href="#src-cisa-aa20-352a">[1]</a></p></li>
+<li id="def-protect-remote-access"><label><input type="checkbox"> <span>Blunt password guessing and spraying by requiring MFA and properly securing admin credentials on remote access services.</span></label>
+<p class="cites">Addresses: <a href="#step-other-entry-points">Step 6</a> · Sources: <a href="#src-cisa-aa20-352a">[1]</a></p></li>
+<li id="def-hunt-hands-on"><label><input type="checkbox"> <span>Look for one account logging on to many hosts, legitimate tools briefly replaced and then restored, and scheduled tasks that change and then change back.</span></label>
+<p class="cites">Addresses: <a href="#step-hands-on-activity">Step 7</a> · Sources: <a href="#src-mandiant-sunburst">[7]</a></p></li>
+<li id="def-scan-for-backdoor"><label><input type="checkbox"> <span>Scan Orion servers with the detections Mandiant and Microsoft published for SUNBURST and its follow-on tools, and treat accounts used on any flagged server as compromised.</span></label>
+<p class="cites">Addresses: <a href="#step-signed-trojanized-updates">Step 3</a>, <a href="#step-backdoor-hides">Step 4</a> · Sources: <a href="#src-mandiant-sunburst">[7]</a> <a href="#src-microsoft-solorigate">[8]</a></p></li>
+</ul>
+</section>
+<section id="sources" aria-labelledby="sources-title">
+<h2 id="sources-title">Sources</h2>
+<ol class="sources">
+<li id="src-cisa-aa20-352a"><a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a" rel="noopener noreferrer"><bdi>Advanced Persistent Threat Compromise of Government Agencies, Critical Infrastructure, and Private Sector Organizations (AA20-352A)</bdi></a> <span class="source-meta"><bdi>CISA</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-cisa-ed-21-01"><a href="https://www.cisa.gov/news-events/directives/ed-21-01-mitigate-solarwinds-orion-code-compromise" rel="noopener noreferrer"><bdi>ED 21-01: Mitigate SolarWinds Orion Code Compromise</bdi></a> <span class="source-meta"><bdi>CISA</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-solarwinds-advisory"><a href="https://www.solarwinds.com/sa-overview/securityadvisory" rel="noopener noreferrer"><bdi>Security Advisory</bdi></a> <span class="source-meta"><bdi>SolarWinds</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-solarwinds-new-findings"><a href="https://www.solarwinds.com/blog/new-findings-from-our-investigation-of-sunburst" rel="noopener noreferrer"><bdi>New Findings From Our Investigation of SUNBURST</bdi></a> <span class="source-meta"><bdi>SolarWinds</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-joint-statement-2021"><a href="https://www.cisa.gov/news/2021/01/05/joint-statement-federal-bureau-investigation-fbi-cybersecurity-and-infrastructure" rel="noopener noreferrer"><bdi>Joint Statement by the Federal Bureau of Investigation (FBI), the Cybersecurity and Infrastructure Security Agency (CISA), the Office of the Director of National Intelligence (ODNI), and the National Security Agency (NSA)</bdi></a> <span class="source-meta"><bdi>CISA</bdi> · report · retrieved 2026-11-25</span></li>
+<li id="src-whitehouse-fact-sheet"><a href="https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2021/04/15/fact-sheet-imposing-costs-for-harmful-foreign-activities-by-the-russian-government/" rel="noopener noreferrer"><bdi>FACT SHEET: Imposing Costs for Harmful Foreign Activities by the Russian Government</bdi></a> <span class="source-meta"><bdi>The White House (archived)</bdi> · report · retrieved 2026-11-25</span></li>
+<li id="src-mandiant-sunburst"><a href="https://cloud.google.com/blog/topics/threat-intelligence/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor" rel="noopener noreferrer"><bdi>Highly Evasive Attacker Leverages SolarWinds Supply Chain to Compromise Multiple Global Victims With SUNBURST Backdoor</bdi></a> <span class="source-meta"><bdi>Mandiant (Google Cloud)</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-microsoft-solorigate"><a href="https://www.microsoft.com/en-us/security/blog/2020/12/18/analyzing-solorigate-the-compromised-dll-file-that-started-a-sophisticated-cyberattack-and-how-microsoft-defender-helps-protect/" rel="noopener noreferrer"><bdi>Analyzing Solorigate, the compromised DLL file that started a sophisticated cyberattack, and how Microsoft Defender helps protect customers</bdi></a> <span class="source-meta"><bdi>Microsoft Threat Intelligence</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-crowdstrike-sunspot"><a href="https://www.crowdstrike.com/blog/sunspot-malware-technical-analysis/" rel="noopener noreferrer"><bdi>SUNSPOT: An Implant in the Build Process</bdi></a> <span class="source-meta"><bdi>CrowdStrike</bdi> · research · retrieved 2026-11-25</span></li>
+</ol>
+</section>
+</main>
+<footer>
+<p>Schema version 1 · Created by the Breachmap skill 0.1.0 on 2026-11-25 · Not reviewed yet · Made with Breachmap 0.1.0</p>
+</footer>
+<script>(function () {
+  var doc = document;
+  doc.documentElement.classList.add("js");
+  function all(selector) {
+    return Array.prototype.slice.call(doc.querySelectorAll(selector));
+  }
+  var steps = all("li.step");
+  var arrows = all("a.arrow");
+  var sources = all("ol.sources > li");
+  var status = doc.getElementById("nav-status");
+  var prev = doc.getElementById("nav-prev");
+  var next = doc.getElementById("nav-next");
+  var current = 0;
+  function indexOf(id) {
+    return steps.findIndex(function (s) { return s.id === id; });
+  }
+  function mark(el, on) {
+    if (on) el.setAttribute("aria-current", "step");
+    else el.removeAttribute("aria-current");
+  }
+  function select(i, scroll, focus) {
+    current = Math.max(0, Math.min(steps.length - 1, i));
+    var step = steps[current];
+    var cited = (step.getAttribute("data-sources") || "").split(" ");
+    steps.forEach(function (s) { mark(s, s === step); });
+    arrows.forEach(function (a) { mark(a, a.getAttribute("data-step") === step.id); });
+    sources.forEach(function (li) { li.classList.toggle("hl", cited.indexOf(li.id) !== -1); });
+    status.textContent = "Step " + (current + 1) + " of " + steps.length;
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length - 1;
+    if (focus) step.focus({ preventScroll: true });
+    if (scroll) step.scrollIntoView({ block: "nearest" });
+  }
+  steps.forEach(function (s, i) {
+    s.setAttribute("tabindex", "-1");
+    s.addEventListener("click", function () { select(i, false, false); });
+  });
+  prev.addEventListener("click", function () { select(current - 1, true, false); });
+  next.addEventListener("click", function () { select(current + 1, true, false); });
+  doc.addEventListener("click", function (e) {
+    var link = e.target.closest && e.target.closest("a[href^='#step-']");
+    var i = link ? indexOf(link.getAttribute("href").slice(1)) : -1;
+    if (i !== -1) select(i, false, false);
+  });
+  doc.addEventListener("keydown", function (e) {
+    var t = e.target;
+    var skip = t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest(".diagram")));
+    var delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!delta || skip || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    select(current + delta, true, true);
+  });
+  var start = indexOf(window.location.hash.slice(1));
+  select(start === -1 ? 0 : start, false, false);
+})();</script>
+</body>
+</html>

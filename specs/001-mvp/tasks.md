@@ -54,11 +54,11 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 - [x] **T22** Skill `skill/breachmap/SKILL.md`, linked in `.claude/skills/`;
   security-auditor pass. (FR-17, FR-18, FR-19, FR-20)
-- [ ] **T23** 👤 Gallery: xz Utils backdoor. (FR-21, FR-22)
-- [ ] **T24** 👤 Gallery: Log4Shell. (FR-21, FR-22)
-- [ ] **T25** 👤 Gallery: SolarWinds Orion / SUNBURST. (FR-21, FR-22)
-- [ ] **T26** 👤 Gallery: MOVEit Transfer. (FR-21, FR-22)
-- [ ] **T27** 👤 Gallery: GitHub MCP prompt-injection data leak. (FR-21, FR-22)
+- [ ] **T23** 👤 Gallery: xz Utils backdoor. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
+- [ ] **T24** 👤 Gallery: Log4Shell. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
+- [ ] **T25** 👤 Gallery: SolarWinds Orion / SUNBURST. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
+- [ ] **T26** 👤 Gallery: MOVEit Transfer. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
+- [ ] **T27** 👤 Gallery: GitHub MCP prompt-injection data leak. (FR-21, FR-22) Drafted by the skill; waiting for Shuja's review and `reviewedBy`.
 - [ ] **T28** 👤 3 golden files in `evals/golden/`. (spec section 10)
 - [x] **T29** Eval scorer `pnpm eval:score` (E1, E2) and `eval-grader` subagent (E3, E4). (AC8)
 - [ ] **T30** 👤 Run evals and meet all E1 to E4 targets. (AC7, AC8)

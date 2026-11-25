@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "id": "solarwinds-sunburst-2020",
+  "title": "SolarWinds Orion SUNBURST supply-chain compromise",
+  "summary": "Attackers broke into SolarWinds, planted a tool in its build system that slipped the SUNBURST backdoor into signed Orion updates, and used those updates to reach thousands of customer networks in 2020. In a small set of chosen targets they went on to forge sign-in tokens and read email in cloud services. In April 2021 the US government formally named Russia's foreign intelligence service (SVR) as responsible.",
+  "dates": {
+    "started": "2019-09",
+    "discovered": "2020-12",
+    "disclosed": "2020-12-13"
+  },
+  "entities": [
+    {
+      "id": "svr",
+      "name": "Russian Foreign Intelligence Service (SVR), aka APT29",
+      "kind": "attacker"
+    },
+    {
+      "id": "solarwinds",
+      "name": "SolarWinds (maker of Orion)",
+      "kind": "victim"
+    },
+    {
+      "id": "orion-build",
+      "name": "SolarWinds Orion build system",
+      "kind": "system"
+    },
+    {
+      "id": "orion-servers",
+      "name": "Customer Orion servers",
+      "kind": "system"
+    },
+    {
+      "id": "customer-networks",
+      "name": "Customer and government networks",
+      "kind": "victim"
+    },
+    {
+      "id": "cloud-identity",
+      "name": "Cloud identity and email (SAML, Microsoft 365)",
+      "kind": "system"
+    }
+  ],
+  "steps": [
+    {
+      "id": "solarwinds-intrusion",
+      "title": "Attackers get into SolarWinds' internal network",
+      "description": "SolarWinds' own investigation traced the first suspicious activity on its internal systems to September 2019. An Orion release in October 2019 carried small test changes, which SolarWinds sees as the attackers checking whether they could slip code into its builds. The cited sources do not say how the attackers first got in. In April 2021 the US government formally named Russia's foreign intelligence service (SVR, also called APT29) as the actor, with high confidence.",
+      "phase": "initial-access",
+      "from": "svr",
+      "to": "solarwinds",
+      "confidence": "confirmed",
+      "sourceIds": ["solarwinds-new-findings", "whitehouse-fact-sheet"]
+    },
+    {
+      "id": "sunspot-build-tampering",
+      "title": "SUNSPOT injects the backdoor during Orion builds",
+      "description": "From February 2020 the attackers ran a tool, later named SUNSPOT, on the SolarWinds build system. It waited for Orion to be compiled, swapped one source file for a backdoored copy just before the compiler read it, and put the original back when the build ended. It checked file hashes first so a broken build would not give it away, which helped it stay hidden from the developers and build team.",
+      "phase": "initial-access",
+      "techniqueId": "T1195.002",
+      "from": "svr",
+      "to": "orion-build",
+      "confidence": "confirmed",
+      "sourceIds": ["solarwinds-new-findings", "solarwinds-advisory", "crowdstrike-sunspot"]
+    },
+    {
+      "id": "signed-trojanized-updates",
+      "title": "Signed, backdoored Orion updates reach customers",
+      "description": "Because the code was added before the final build steps, the tampered Orion library (SolarWinds.Orion.Core.BusinessLayer.dll) was signed with SolarWinds' real code-signing certificate. CISA lists the affected releases as Orion 2019.4 HF5, 2020.2 RC1, 2020.2 RC2, 2020.2 and 2020.2 HF1, posted to SolarWinds' update site in spring 2020. Customers installed them as normal updates, and the backdoor, called SUNBURST, loaded inside the regular Orion service.",
+      "phase": "initial-access",
+      "from": "orion-build",
+      "to": "orion-servers",
+      "confidence": "confirmed",
+      "sourceIds": [
+        "cisa-aa20-352a",
+        "solarwinds-advisory",
+        "microsoft-solorigate",
+        "mandiant-sunburst"
+      ]
+    },
+    {
+      "id": "backdoor-hides",
+      "title": "The backdoor waits and hides from defenders",
+      "description": "After install, SUNBURST stayed quiet for roughly 12 to 14 days. It held back if it found itself in a test or analysis setup or saw certain security and forensic tools, and it added random delays between check-ins. Its code used ordinary-sounding names and hidden text strings so it looked like normal Orion code. Mandiant also reported that commands were tucked inside normal-looking data in server replies; CISA said it had not confirmed that part itself.",
+      "phase": "stealth",
+      "from": "orion-servers",
+      "to": "orion-servers",
+      "confidence": "reported",
+      "sourceIds": ["mandiant-sunburst", "microsoft-solorigate", "cisa-aa20-352a"]
+    },
+    {
+      "id": "dns-c2-selection",
+      "title": "SUNBURST calls home and the attackers pick targets",
+      "description": "Each infected server contacted its own subdomain of avsvmcloud[.]com, with traffic made to look like normal SolarWinds product traffic. The attackers used the DNS replies to choose which victims to pursue: chosen ones were sent new addresses for hands-on control, while many others got no follow-up. The control servers often used addresses in the victim's own country, and Mandiant reported hostnames copied from the victim's network.",
+      "phase": "command-and-control",
+      "techniqueId": "T1071.004",
+      "from": "orion-servers",
+      "to": "svr",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa20-352a", "mandiant-sunburst"]
+    },
+    {
+      "id": "other-entry-points",
+      "title": "Other ways in besides Orion",
+      "description": "CISA found the same actor inside some networks that had no Orion exposure. In some cases it got in by guessing or spraying passwords, or by using weakly protected admin credentials on remote access services. CISA warned that more entry methods were likely still unknown, so removing Orion alone was not enough.",
+      "phase": "initial-access",
+      "from": "svr",
+      "to": "customer-networks",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa20-352a", "cisa-ed-21-01"]
+    },
+    {
+      "id": "hands-on-activity",
+      "title": "Second-stage tools and quiet lateral movement",
+      "description": "On selected victims the attackers loaded follow-on tools, including a memory-only dropper Mandiant named TEARDROP that in at least one case launched a customized Cobalt Strike Beacon. They moved between machines with credentials different from the ones used to get in, renamed admin tools, and briefly swapped legitimate utilities or scheduled tasks for their own before putting the originals back.",
+      "phase": "lateral-movement",
+      "from": "svr",
+      "to": "customer-networks",
+      "confidence": "reported",
+      "sourceIds": ["mandiant-sunburst", "microsoft-solorigate"]
+    },
+    {
+      "id": "saml-token-forgery",
+      "title": "Stealing the SAML signing key to forge sign-ins",
+      "description": "With high Active Directory privileges, the attackers took the certificate used to sign SAML sign-in tokens. They then made valid-looking tokens for services that trust that identity system, such as hosted email and file storage. CISA noted the actor relied heavily on stolen or forged tokens to move around.",
+      "phase": "credential-access",
+      "techniqueId": "T1606.002",
+      "from": "customer-networks",
+      "to": "cloud-identity",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa20-352a", "microsoft-solorigate"]
+    },
+    {
+      "id": "cloud-persistence",
+      "title": "Extra keys added in Microsoft cloud identity",
+      "description": "In Azure AD and Microsoft 365, the attackers added their own tokens and certificates to existing application service principals, giving them lasting, programmatic access through the Microsoft Graph API. They also added new federation trusts, which could keep their access alive.",
+      "phase": "persistence",
+      "techniqueId": "T1098.001",
+      "from": "svr",
+      "to": "cloud-identity",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa20-352a"]
+    },
+    {
+      "id": "email-collection",
+      "title": "Reading and taking email through approved APIs",
+      "description": "The attackers went after the mailboxes of key staff, including IT and incident response people, and pulled data out through authorized cloud APIs.",
+      "phase": "collection",
+      "techniqueId": "T1114.002",
+      "from": "cloud-identity",
+      "to": "svr",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa20-352a"]
+    }
+  ],
+  "impact": {
+    "description": "About 18,000 public and private sector Orion customers were affected, but US agencies said only a much smaller number saw follow-on intrusions, including fewer than ten US government agencies identified by January 2021. They believed the goal was intelligence gathering. According to the White House, the access could have let the SVR watch, and possibly disrupt, over 16,000 systems around the world. Mandiant reported victims in government, consulting, technology, telecom and extractive industries across several regions.",
+    "sourceIds": ["joint-statement-2021", "whitehouse-fact-sheet", "mandiant-sunburst"]
+  },
+  "defenses": [
+    {
+      "id": "watch-build-systems",
+      "action": "Watch build servers for unexpected scheduled tasks, processes reading the compiler's memory, and source files that change while a build runs, so injected code is caught before a release ships.",
+      "stepIds": ["sunspot-build-tampering"],
+      "sourceIds": ["crowdstrike-sunspot"]
+    },
+    {
+      "id": "isolate-orion",
+      "action": "Image affected Orion servers for forensics, then disconnect or power them down, block their traffic to and from the internet, and rebuild them from trusted sources instead of only patching in place.",
+      "stepIds": ["signed-trojanized-updates", "dns-c2-selection"],
+      "sourceIds": ["cisa-ed-21-01", "cisa-aa20-352a"]
+    },
+    {
+      "id": "upgrade-orion",
+      "action": "Run only a clean Orion release named by SolarWinds; its April 2021 advisory pointed to 2020.2.5 or 2019.4.2, and CISA required at least 2020.2.1 HF2 for continued use.",
+      "stepIds": ["signed-trojanized-updates"],
+      "sourceIds": ["solarwinds-advisory", "cisa-ed-21-01"]
+    },
+    {
+      "id": "limit-orion-reach",
+      "action": "Give monitoring servers like Orion only the privileges they need, block their direct internet access, and keep their admin rights away from top-tier systems.",
+      "stepIds": ["dns-c2-selection", "hands-on-activity"],
+      "sourceIds": ["mandiant-sunburst", "cisa-aa20-352a"]
+    },
+    {
+      "id": "reset-credentials",
+      "action": "Reset every credential Orion used or stored, fix accounts open to Kerberoasting, and reset the KRBTGT password twice.",
+      "stepIds": ["hands-on-activity", "saml-token-forgery"],
+      "sourceIds": ["cisa-ed-21-01", "cisa-aa20-352a"]
+    },
+    {
+      "id": "rebuild-identity-trust",
+      "action": "If admin credentials or SAML signing were abused, treat the whole identity trust store as compromised, rebuild identity services, and remove any accounts and persistence the attacker added.",
+      "stepIds": ["saml-token-forgery", "cloud-persistence"],
+      "sourceIds": ["cisa-aa20-352a"]
+    },
+    {
+      "id": "hunt-token-abuse",
+      "action": "Hunt sign-in logs for impossible travel, SAML tokens with odd lifetimes or timestamps, and unusual MFA claims, and keep host, cloud and network logs centrally for at least 180 days.",
+      "stepIds": ["saml-token-forgery", "email-collection", "other-entry-points"],
+      "sourceIds": ["cisa-aa20-352a"]
+    },
+    {
+      "id": "protect-remote-access",
+      "action": "Blunt password guessing and spraying by requiring MFA and properly securing admin credentials on remote access services.",
+      "stepIds": ["other-entry-points"],
+      "sourceIds": ["cisa-aa20-352a"]
+    },
+    {
+      "id": "hunt-hands-on",
+      "action": "Look for one account logging on to many hosts, legitimate tools briefly replaced and then restored, and scheduled tasks that change and then change back.",
+      "stepIds": ["hands-on-activity"],
+      "sourceIds": ["mandiant-sunburst"]
+    },
+    {
+      "id": "scan-for-backdoor",
+      "action": "Scan Orion servers with the detections Mandiant and Microsoft published for SUNBURST and its follow-on tools, and treat accounts used on any flagged server as compromised.",
+      "stepIds": ["signed-trojanized-updates", "backdoor-hides"],
+      "sourceIds": ["mandiant-sunburst", "microsoft-solorigate"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cisa-aa20-352a",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a",
+      "title": "Advanced Persistent Threat Compromise of Government Agencies, Critical Infrastructure, and Private Sector Organizations (AA20-352A)",
+      "publisher": "CISA",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-ed-21-01",
+      "url": "https://www.cisa.gov/news-events/directives/ed-21-01-mitigate-solarwinds-orion-code-compromise",
+      "title": "ED 21-01: Mitigate SolarWinds Orion Code Compromise",
+      "publisher": "CISA",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "solarwinds-advisory",
+      "url": "https://www.solarwinds.com/sa-overview/securityadvisory",
+      "title": "Security Advisory",
+      "publisher": "SolarWinds",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "solarwinds-new-findings",
+      "url": "https://www.solarwinds.com/blog/new-findings-from-our-investigation-of-sunburst",
+      "title": "New Findings From Our Investigation of SUNBURST",
+      "publisher": "SolarWinds",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "joint-statement-2021",
+      "url": "https://www.cisa.gov/news/2021/01/05/joint-statement-federal-bureau-investigation-fbi-cybersecurity-and-infrastructure",
+      "title": "Joint Statement by the Federal Bureau of Investigation (FBI), the Cybersecurity and Infrastructure Security Agency (CISA), the Office of the Director of National Intelligence (ODNI), and the National Security Agency (NSA)",
+      "publisher": "CISA",
+      "type": "report",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "whitehouse-fact-sheet",
+      "url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2021/04/15/fact-sheet-imposing-costs-for-harmful-foreign-activities-by-the-russian-government/",
+      "title": "FACT SHEET: Imposing Costs for Harmful Foreign Activities by the Russian Government",
+      "publisher": "The White House (archived)",
+      "type": "report",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "mandiant-sunburst",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor",
+      "title": "Highly Evasive Attacker Leverages SolarWinds Supply Chain to Compromise Multiple Global Victims With SUNBURST Backdoor",
+      "publisher": "Mandiant (Google Cloud)",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "microsoft-solorigate",
+      "url": "https://www.microsoft.com/en-us/security/blog/2020/12/18/analyzing-solorigate-the-compromised-dll-file-that-started-a-sophisticated-cyberattack-and-how-microsoft-defender-helps-protect/",
+      "title": "Analyzing Solorigate, the compromised DLL file that started a sophisticated cyberattack, and how Microsoft Defender helps protect customers",
+      "publisher": "Microsoft Threat Intelligence",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "crowdstrike-sunspot",
+      "url": "https://www.crowdstrike.com/blog/sunspot-malware-technical-analysis/",
+      "title": "SUNSPOT: An Implant in the Build Process",
+      "publisher": "CrowdStrike",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    }
+  ],
+  "provenance": {
+    "createdBy": "skill",
+    "skillVersion": "0.1.0",
+    "createdAt": "2026-11-25"
+  }
+}

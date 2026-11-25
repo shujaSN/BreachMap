@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-Tz+vm3gFritNJm/bbNjZUfdk8AUsnvc+oIjDNo3Ms2A=&#39;; style-src &#39;sha256-fQ+IkBQak1A41tcEX6uA7qCH4YdBzxel/5DVFY4bZuQ=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⁨MOVEit Transfer mass exploitation (CVE-2023-34362)⁩ · Breachmap</title>
+<style>:root{color-scheme:light dark;--bg:#ffffff;--card:#f4f5f7;--fg:#1b1c1e;--muted:#4b4f56;--line:#767a80;--accent:#0b57d0;--accent-bg:#e3ecfb;--reported:#8a4b00;--disputed:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#121316;--card:#1d1f23;--fg:#e9eaec;--muted:#b4b8bf;--line:#8e939a;--accent:#8ab4f8;--accent-bg:#1e2a3f;--reported:#f2b866;--disputed:#f2a29b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
+header.top,main,footer{max-width:72rem;margin:0 auto;padding:1.5rem}
+h1{font-size:1.9rem;line-height:1.2;margin:.25rem 0 .75rem}
+h2{font-size:1.35rem;margin:2rem 0 1rem}
+h3{font-size:1.05rem;margin:0 0 .35rem}
+.kicker{margin:0;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.summary{max-width:60ch;font-size:1.1rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 2rem;margin:1rem 0 0}
+.facts dt{color:var(--muted);font-size:.8rem}
+.facts dd{margin:0;font-weight:600}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#flow{display:grid;gap:1rem 2rem}
+@media (min-width:60rem){#flow{grid-template-columns:minmax(0,max-content) minmax(22rem,1fr);align-items:start}#flow h2,#flow .controls{grid-column:1/-1}.diagram{position:sticky;top:1rem;max-height:calc(100vh - 2rem)}}
+.diagram{margin:0;overflow:auto;background:var(--card);border-radius:8px;padding:.5rem}
+.diagram svg{display:block}
+.lane-label{fill:var(--fg);font-size:13px;font-weight:600;text-anchor:middle}
+.lifeline{stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 5}
+.arrow line{stroke:var(--fg);stroke-width:2}
+.arrow circle{fill:var(--fg)}
+#arrowhead path{fill:var(--fg);fill:context-stroke}
+.arrow.reported line{stroke:var(--reported);stroke-dasharray:8 5}
+.arrow.reported circle{fill:var(--reported)}
+.arrow.disputed line{stroke:var(--disputed);stroke-dasharray:2 4}
+.arrow.disputed circle{fill:var(--disputed)}
+.step-n{fill:var(--fg);font-size:12px;font-weight:700;text-anchor:middle}
+.arrow[aria-current=step] line{stroke:var(--accent);stroke-width:4}
+.arrow[aria-current=step] circle,.arrow[aria-current=step] .step-n{fill:var(--accent)}
+.steps{list-style:none;margin:0;padding:0}
+.step{background:var(--card);border-left:4px solid transparent;border-radius:6px;margin:0 0 .75rem;padding:.75rem 1rem;scroll-margin:1rem}
+html:not(.js) .step:target,.step[aria-current=step]{border-left-color:var(--accent)}
+.n{display:inline-block;min-width:1.7em;margin-right:.35rem;border-radius:999px;background:var(--accent);color:var(--bg);text-align:center;font-size:.85rem}
+.meta,.cites,.actors{margin:.25rem 0;color:var(--muted);font-size:.9rem}
+.technique{margin-left:.4rem}
+.badge{margin-left:.4rem;padding:0 .4rem;border:1px solid currentColor;border-radius:4px;font-weight:600}
+.badge.reported{color:var(--reported)}
+.badge.disputed{color:var(--disputed)}
+.checklist{list-style:none;padding:0}
+.checklist li{margin:0 0 .75rem}
+.checklist label{display:flex;gap:.6rem;align-items:flex-start;font-weight:600}
+.checklist input{width:1.15rem;height:1.15rem;margin-top:.2rem;accent-color:var(--accent)}
+.sources{padding-left:1.5rem}
+.sources li{margin:0 0 .5rem;padding:.2rem .4rem;border-radius:4px;scroll-margin:1rem}
+html:not(.js) .sources li:target,.sources li.hl{background:var(--accent-bg)}
+.source-meta{color:var(--muted);font-size:.9rem}
+.controls{display:none}
+.js .controls{display:flex;gap:.75rem;align-items:center}
+.controls button{font:inherit;padding:.35rem .9rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+.controls button:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}</style>
+</head>
+<body>
+<header class="top">
+<p class="kicker">Breachmap attack map</p>
+<h1>MOVEit Transfer mass exploitation (CVE-2023-34362)</h1>
+<p class="summary">From late May 2023, attackers abused a previously unknown SQL injection flaw (CVE-2023-34362) in Progress MOVEit Transfer, a file transfer app that sits on the internet. They planted a web shell called LEMURLOOT and stole stored files at scale before a fix existed. CISA and FBI tie the campaign to the CL0P ransomware gang (TA505), which then pressed victims through its leak site. Thousands of organizations were hit, many through vendors that used MOVEit.</p>
+<dl class="facts">
+<div><dt>Started</dt><dd>2023-05-27</dd></div>
+<div><dt>Discovered</dt><dd>2023-05</dd></div>
+<div><dt>Disclosed</dt><dd>2023-05-31</dd></div>
+<div><dt>CVE</dt><dd>CVE-2023-34362</dd></div>
+</dl>
+</header>
+<main>
+<section id="flow" aria-labelledby="flow-title">
+<h2 id="flow-title">Attack flow</h2>
+<div class="controls" role="group" aria-label="Step navigation"><button type="button" id="nav-prev" aria-keyshortcuts="ArrowLeft">Previous step</button><span id="nav-status" aria-live="polite"></span><button type="button" id="nav-next" aria-keyshortcuts="ArrowRight">Next step</button><span class="hint">or use ← →</span></div>
+<figure class="diagram">
+<svg viewBox="0 0 1008 592" width="1008" height="592" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: 9 steps between 6 entities</title>
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>
+<g class="lane"><title>Attackers attributed to CL0P (TA505)</title><text class="lane-label" x="104" y="36">Attackers attribute…</text><line class="lifeline" x1="104" y1="64" x2="104" y2="568"></line></g>
+<g class="lane"><title>MOVEit Transfer web app (internet-facing)</title><text class="lane-label" x="264" y="36">MOVEit Transfer web…</text><line class="lifeline" x1="264" y1="64" x2="264" y2="568"></line></g>
+<g class="lane"><title>MOVEit Transfer database</title><text class="lane-label" x="424" y="36">MOVEit Transfer dat…</text><line class="lifeline" x1="424" y1="64" x2="424" y2="568"></line></g>
+<g class="lane"><title>MOVEit Transfer Windows server</title><text class="lane-label" x="584" y="36">MOVEit Transfer Win…</text><line class="lifeline" x1="584" y1="64" x2="584" y2="568"></line></g>
+<g class="lane"><title>Linked Azure Blob Storage</title><text class="lane-label" x="744" y="36">Linked Azure Blob S…</text><line class="lifeline" x1="744" y1="64" x2="744" y2="568"></line></g>
+<g class="lane"><title>MOVEit customers and people in their files</title><text class="lane-label" x="904" y="36">MOVEit customers an…</text><line class="lifeline" x1="904" y1="64" x2="904" y2="568"></line></g>
+<a class="arrow confirmed" href="#step-exploit-sql-injection" data-step="step-exploit-sql-injection" tabindex="-1"><title>Step 1: ⁨Abuse an unknown SQL injection flaw over the web⁩</title><line x1="104" y1="92" x2="264" y2="92" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="84">1</text></a>
+<a class="arrow reported" href="#step-gain-admin-control" data-step="step-gain-admin-control" tabindex="-1"><title>Step 2: ⁨Turn database access into admin-level control⁩ (reported)</title><line x1="264" y1="148" x2="424" y2="148" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="140">2</text></a>
+<a class="arrow reported" href="#step-run-code-on-server" data-step="step-run-code-on-server" tabindex="-1"><title>Step 3: ⁨Make the server run attacker code⁩ (reported)</title><line x1="264" y1="204" x2="584" y2="204" marker-end="url(#arrowhead)"></line><text class="step-n" x="424" y="196">3</text></a>
+<a class="arrow confirmed" href="#step-plant-web-shell" data-step="step-plant-web-shell" tabindex="-1"><title>Step 4: ⁨Plant the LEMURLOOT web shell⁩</title><line x1="104" y1="260" x2="584" y2="260" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="252">4</text></a>
+<a class="arrow confirmed" href="#step-create-admin-account" data-step="step-create-admin-account" tabindex="-1"><title>Step 5: ⁨Add a fake &#39;Health Check Service&#39; admin account⁩</title><line x1="584" y1="316" x2="424" y2="316" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="308">5</text></a>
+<a class="arrow confirmed" href="#step-map-data" data-step="step-map-data" tabindex="-1"><title>Step 6: ⁨List the database, files and folders⁩</title><line x1="584" y1="372" x2="424" y2="372" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="364">6</text></a>
+<a class="arrow confirmed" href="#step-steal-azure-keys" data-step="step-steal-azure-keys" tabindex="-1"><title>Step 7: ⁨Read Azure Blob Storage settings and keys⁩</title><line x1="584" y1="428" x2="744" y2="428" marker-end="url(#arrowhead)"></line><text class="step-n" x="664" y="420">7</text></a>
+<a class="arrow confirmed" href="#step-exfiltrate-files" data-step="step-exfiltrate-files" tabindex="-1"><title>Step 8: ⁨Download stored files in bulk⁩</title><line x1="584" y1="484" x2="104" y2="484" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="476">8</text></a>
+<a class="arrow reported" href="#step-extort-victims" data-step="step-extort-victims" tabindex="-1"><title>Step 9: ⁨Pressure victims through the CL0P leak site⁩ (reported)</title><line x1="104" y1="540" x2="904" y2="540" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="532">9</text></a>
+</svg>
+</figure>
+<ol class="steps">
+<li class="step" id="step-exploit-sql-injection" data-sources="src-progress-advisory src-cve-record src-cisa-fbi-aa23-158a src-mandiant-report">
+<h3><span class="n">1</span> <bdi>Abuse an unknown SQL injection flaw over the web</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1190/" rel="noopener noreferrer">T1190</a></p>
+<p class="actors"><bdi>Attackers attributed to CL0P (TA505)</bdi> → <bdi>MOVEit Transfer web app (internet-facing)</bdi></p>
+<p>From about 27 May 2023 the attackers sent crafted web requests to MOVEit Transfer servers exposed to the internet. A flaw in the web app let them, without logging in, mix their own database instructions into the queries the app sends to its database. No fix existed yet, so every exposed version was open. Progress published its advisory on 31 May 2023.</p>
+<p class="cites">Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-cve-record">[2]</a> <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-mandiant-report">[4]</a></p>
+</li>
+<li class="step" id="step-gain-admin-control" data-sources="src-progress-advisory src-cve-record src-huntress-analysis">
+<h3><span class="n">2</span> <bdi>Turn database access into admin-level control</bdi></h3>
+<p class="meta"><span class="phase">Privilege Escalation</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>MOVEit Transfer web app (internet-facing)</bdi> → <bdi>MOVEit Transfer database</bdi></p>
+<p>Progress and the CVE record confirm the flaw let an outsider learn the layout and contents of the MOVEit database and change or delete records. Huntress, which rebuilt the attack, reports that this was used to get administrator-level access inside the app. That second part comes from research, not from the vendor.</p>
+<p class="cites">Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-cve-record">[2]</a> <a href="#src-huntress-analysis">[5]</a></p>
+</li>
+<li class="step" id="step-run-code-on-server" data-sources="src-huntress-analysis src-cisa-fbi-aa23-158a">
+<h3><span class="n">3</span> <bdi>Make the server run attacker code</bdi></h3>
+<p class="meta"><span class="phase">Execution</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>MOVEit Transfer web app (internet-facing)</bdi> → <bdi>MOVEit Transfer Windows server</bdi></p>
+<p>Huntress reports that the admin-level access was then used to make the server run the attackers&#39; own code, under a service account with local administrator rights. The vendor advisory does not describe this chain. CISA and FBI only confirm that the attackers went on to install files on the server.</p>
+<p class="cites">Sources: <a href="#src-huntress-analysis">[5]</a> <a href="#src-cisa-fbi-aa23-158a">[3]</a></p>
+</li>
+<li class="step" id="step-plant-web-shell" data-sources="src-cisa-fbi-aa23-158a src-mandiant-report src-progress-advisory">
+<h3><span class="n">4</span> <bdi>Plant the LEMURLOOT web shell</bdi></h3>
+<p class="meta"><span class="phase">Persistence</span> <a class="technique" href="https://attack.mitre.org/techniques/T1505/003/" rel="noopener noreferrer">T1505.003</a></p>
+<p class="actors"><bdi>Attackers attributed to CL0P (TA505)</bdi> → <bdi>MOVEit Transfer Windows server</bdi></p>
+<p>The attackers dropped a web shell, a hidden web page that takes their commands, named human2.aspx so it looked like the real MOVEit file human.aspx. CISA and FBI call it LEMURLOOT. It only answered requests that carried a secret password, so the attackers kept sole use of it.</p>
+<p class="cites">Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-mandiant-report">[4]</a> <a href="#src-progress-advisory">[1]</a></p>
+</li>
+<li class="step" id="step-create-admin-account" data-sources="src-cisa-fbi-aa23-158a src-mandiant-report">
+<h3><span class="n">5</span> <bdi>Add a fake &#39;Health Check Service&#39; admin account</bdi></h3>
+<p class="meta"><span class="phase">Persistence</span> <a class="technique" href="https://attack.mitre.org/techniques/T1136/" rel="noopener noreferrer">T1136</a></p>
+<p class="actors"><bdi>MOVEit Transfer Windows server</bdi> → <bdi>MOVEit Transfer database</bdi></p>
+<p>Through the web shell the attackers could add a MOVEit administrator with a random username and the display name Health Check Service, and could delete such accounts again. CISA warns these accounts live in the database, so a rebuilt server that reuses the old database can still hold them.</p>
+<p class="cites">Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-mandiant-report">[4]</a></p>
+</li>
+<li class="step" id="step-map-data" data-sources="src-cisa-fbi-aa23-158a src-mandiant-report">
+<h3><span class="n">6</span> <bdi>List the database, files and folders</bdi></h3>
+<p class="meta"><span class="phase">Discovery</span></p>
+<p class="actors"><bdi>MOVEit Transfer Windows server</bdi> → <bdi>MOVEit Transfer database</bdi></p>
+<p>The web shell could list the contents of the underlying database and the files and folders stored in MOVEit, and fetch a file by its name. This showed the attackers what each victim held.</p>
+<p class="cites">Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-mandiant-report">[4]</a></p>
+</li>
+<li class="step" id="step-steal-azure-keys" data-sources="src-cisa-fbi-aa23-158a src-mandiant-report src-progress-advisory">
+<h3><span class="n">7</span> <bdi>Read Azure Blob Storage settings and keys</bdi></h3>
+<p class="meta"><span class="phase">Credential Access</span></p>
+<p class="actors"><bdi>MOVEit Transfer Windows server</bdi> → <bdi>Linked Azure Blob Storage</bdi></p>
+<p>On servers that keep files in Microsoft Azure, the web shell could read the app settings that hold the storage account details and access key. Mandiant warns this may have let the attackers take files straight from Azure as well.</p>
+<p class="cites">Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-mandiant-report">[4]</a> <a href="#src-progress-advisory">[1]</a></p>
+</li>
+<li class="step" id="step-exfiltrate-files" data-sources="src-cisa-fbi-aa23-158a src-mandiant-report src-rapid7-timeline">
+<h3><span class="n">8</span> <bdi>Download stored files in bulk</bdi></h3>
+<p class="meta"><span class="phase">Exfiltration</span> <a class="technique" href="https://attack.mitre.org/techniques/T1041/" rel="noopener noreferrer">T1041</a></p>
+<p class="actors"><bdi>MOVEit Transfer Windows server</bdi> → <bdi>Attackers attributed to CL0P (TA505)</bdi></p>
+<p>The attackers pulled out files that users had uploaded to MOVEit, sent back through the web shell in compressed form. Mandiant saw large amounts taken, sometimes within minutes of the web shell going in. Rapid7 found data theft going back to at least 28 May 2023.</p>
+<p class="cites">Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-mandiant-report">[4]</a> <a href="#src-rapid7-timeline">[6]</a></p>
+</li>
+<li class="step" id="step-extort-victims" data-sources="src-mandiant-report src-rapid7-timeline src-cisa-fbi-aa23-158a">
+<h3><span class="n">9</span> <bdi>Pressure victims through the CL0P leak site</bdi></h3>
+<p class="meta"><span class="phase">Impact</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Attackers attributed to CL0P (TA505)</bdi> → <bdi>MOVEit customers and people in their files</bdi></p>
+<p>On 6 June 2023 a post on the CL0P leak site claimed the attacks and told victims to get in touch by 14 June or see their data published. CISA and FBI say CL0P now mostly steals data to extort rather than encrypting it. Mandiant links the activity to the FIN11 group, and Rapid7 notes Microsoft tied it to Lace Tempest.</p>
+<p class="cites">Sources: <a href="#src-mandiant-report">[4]</a> <a href="#src-rapid7-timeline">[6]</a> <a href="#src-cisa-fbi-aa23-158a">[3]</a></p>
+</li>
+</ol>
+</section>
+<section id="impact" aria-labelledby="impact-title">
+<h2 id="impact-title">Impact</h2>
+<p>Files were stolen from MOVEit servers in many sectors and countries, led by the United States and Canada, with education, health and finance hit hardest. Many organizations were exposed only through a vendor or contractor that ran MOVEit. Emsisoft&#39;s tally from breach notices, filings and the leak site reached 2,773 organizations and about 95.8 million people by June 2024, though some people are counted more than once.</p>
+<p class="cites">Sources: <a href="#src-emsisoft-stats">[7]</a> <a href="#src-mandiant-report">[4]</a></p>
+</section>
+<section id="defenses" aria-labelledby="defenses-title">
+<h2 id="defenses-title">Defenses</h2>
+<ul class="checklist">
+<li id="def-patch-moveit"><label><input type="checkbox"> <span>Install the fixed MOVEit Transfer release for your version branch, apply the later June 2023 fixes too, and move off unsupported versions.</span></label>
+<p class="cites">Addresses: <a href="#step-exploit-sql-injection">Step 1</a>, <a href="#step-gain-admin-control">Step 2</a>, <a href="#step-run-code-on-server">Step 3</a> · Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-cve-record">[2]</a> <a href="#src-huntress-analysis">[5]</a></p></li>
+<li id="def-block-web-access"><label><input type="checkbox"> <span>Until patched, block inbound HTTP and HTTPS to the MOVEit server at the firewall, accepting that the web interface and APIs stop working while SFTP and FTPS keep running.</span></label>
+<p class="cites">Addresses: <a href="#step-exploit-sql-injection">Step 1</a> · Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-huntress-analysis">[5]</a></p></li>
+<li id="def-limit-exposure"><label><input type="checkbox"> <span>Patch internet-facing systems listed in CISA&#39;s Known Exploited Vulnerabilities catalog first, and allow remote access to file transfer servers only from trusted addresses.</span></label>
+<p class="cites">Addresses: <a href="#step-exploit-sql-injection">Step 1</a> · Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a> <a href="#src-progress-advisory">[1]</a></p></li>
+<li id="def-hunt-web-shell"><label><input type="checkbox"> <span>Look for human2.aspx or other new files in the MOVEit web folder, extra compiled ASP.NET files and new script files in temp folders. Watch for the web server starting unexpected processes. Remove what you find and check again after patching.</span></label>
+<p class="cites">Addresses: <a href="#step-run-code-on-server">Step 3</a>, <a href="#step-plant-web-shell">Step 4</a> · Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-huntress-analysis">[5]</a> <a href="#src-cisa-fbi-aa23-158a">[3]</a></p></li>
+<li id="def-clean-accounts"><label><input type="checkbox"> <span>Delete unknown MOVEit accounts such as Health Check Service, end active sessions and reset service account passwords. Audit the database as well, since a rebuilt server can inherit attacker accounts from it.</span></label>
+<p class="cites">Addresses: <a href="#step-create-admin-account">Step 5</a> · Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-cisa-fbi-aa23-158a">[3]</a></p></li>
+<li id="def-review-logs"><label><input type="checkbox"> <span>Keep web and MOVEit logging on, and review IIS and MOVEit logs for requests to the web shell, large downloads, or downloads from unknown IP addresses.</span></label>
+<p class="cites">Addresses: <a href="#step-map-data">Step 6</a>, <a href="#step-exfiltrate-files">Step 8</a> · Sources: <a href="#src-progress-advisory">[1]</a> <a href="#src-huntress-analysis">[5]</a> <a href="#src-mandiant-report">[4]</a></p></li>
+<li id="def-rotate-azure-keys"><label><input type="checkbox"> <span>If MOVEit stores files in Azure, check Azure logs for use of the storage keys and rotate any keys the server held.</span></label>
+<p class="cites">Addresses: <a href="#step-steal-azure-keys">Step 7</a> · Sources: <a href="#src-progress-advisory">[1]</a></p></li>
+<li id="def-report-not-pay"><label><input type="checkbox"> <span>Report the theft to the authorities, such as the FBI, IC3 or CISA in the US. CISA and FBI do not encourage paying the extortionists.</span></label>
+<p class="cites">Addresses: <a href="#step-extort-victims">Step 9</a> · Sources: <a href="#src-cisa-fbi-aa23-158a">[3]</a></p></li>
+</ul>
+</section>
+<section id="sources" aria-labelledby="sources-title">
+<h2 id="sources-title">Sources</h2>
+<ol class="sources">
+<li id="src-progress-advisory"><a href="https://community.progress.com/s/article/MOVEit-Transfer-Critical-Vulnerability-31May2023" rel="noopener noreferrer"><bdi>MOVEit Transfer Critical Vulnerability (May 2023) (CVE-2023-34362)</bdi></a> <span class="source-meta"><bdi>Progress Software</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-cve-record"><a href="https://cveawg.mitre.org/api/cve/CVE-2023-34362" rel="noopener noreferrer"><bdi>CVE-2023-34362 record</bdi></a> <span class="source-meta"><bdi>CVE Program (MITRE)</bdi> · cve · retrieved 2026-11-25</span></li>
+<li id="src-cisa-fbi-aa23-158a"><a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a" rel="noopener noreferrer"><bdi>#StopRansomware: CL0P Ransomware Gang Exploits CVE-2023-34362 MOVEit Vulnerability</bdi></a> <span class="source-meta"><bdi>CISA and FBI</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-mandiant-report"><a href="https://cloud.google.com/blog/topics/threat-intelligence/zero-day-moveit-data-theft" rel="noopener noreferrer"><bdi>Zero-Day Vulnerability in MOVEit Transfer Exploited for Data Theft</bdi></a> <span class="source-meta"><bdi>Mandiant (Google Cloud)</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-huntress-analysis"><a href="https://www.huntress.com/blog/moveit-transfer-critical-vulnerability-rapid-response" rel="noopener noreferrer"><bdi>MOVEit Transfer Critical Vulnerability CVE-2023-34362 Rapid Response</bdi></a> <span class="source-meta"><bdi>Huntress</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-rapid7-timeline"><a href="https://rapid7.com/blog/post/2023/06/14/etr-cve-2023-34362-moveit-vulnerability-timeline-of-events" rel="noopener noreferrer"><bdi>CVE-2023-34362: MOVEit Vulnerability Timeline of Events</bdi></a> <span class="source-meta"><bdi>Rapid7</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-emsisoft-stats"><a href="https://emsisoft.com/en/blog/44123/unpacking-the-moveit-breach-statistics-and-analysis/" rel="noopener noreferrer"><bdi>Unpacking the MOVEit Breach: Statistics and Analysis</bdi></a> <span class="source-meta"><bdi>Emsisoft</bdi> · research · retrieved 2026-11-25</span></li>
+</ol>
+</section>
+</main>
+<footer>
+<p>Schema version 1 · Created by the Breachmap skill 0.1.0 on 2026-11-25 · Not reviewed yet · Made with Breachmap 0.1.0</p>
+</footer>
+<script>(function () {
+  var doc = document;
+  doc.documentElement.classList.add("js");
+  function all(selector) {
+    return Array.prototype.slice.call(doc.querySelectorAll(selector));
+  }
+  var steps = all("li.step");
+  var arrows = all("a.arrow");
+  var sources = all("ol.sources > li");
+  var status = doc.getElementById("nav-status");
+  var prev = doc.getElementById("nav-prev");
+  var next = doc.getElementById("nav-next");
+  var current = 0;
+  function indexOf(id) {
+    return steps.findIndex(function (s) { return s.id === id; });
+  }
+  function mark(el, on) {
+    if (on) el.setAttribute("aria-current", "step");
+    else el.removeAttribute("aria-current");
+  }
+  function select(i, scroll, focus) {
+    current = Math.max(0, Math.min(steps.length - 1, i));
+    var step = steps[current];
+    var cited = (step.getAttribute("data-sources") || "").split(" ");
+    steps.forEach(function (s) { mark(s, s === step); });
+    arrows.forEach(function (a) { mark(a, a.getAttribute("data-step") === step.id); });
+    sources.forEach(function (li) { li.classList.toggle("hl", cited.indexOf(li.id) !== -1); });
+    status.textContent = "Step " + (current + 1) + " of " + steps.length;
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length - 1;
+    if (focus) step.focus({ preventScroll: true });
+    if (scroll) step.scrollIntoView({ block: "nearest" });
+  }
+  steps.forEach(function (s, i) {
+    s.setAttribute("tabindex", "-1");
+    s.addEventListener("click", function () { select(i, false, false); });
+  });
+  prev.addEventListener("click", function () { select(current - 1, true, false); });
+  next.addEventListener("click", function () { select(current + 1, true, false); });
+  doc.addEventListener("click", function (e) {
+    var link = e.target.closest && e.target.closest("a[href^='#step-']");
+    var i = link ? indexOf(link.getAttribute("href").slice(1)) : -1;
+    if (i !== -1) select(i, false, false);
+  });
+  doc.addEventListener("keydown", function (e) {
+    var t = e.target;
+    var skip = t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest(".diagram")));
+    var delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!delta || skip || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    select(current + delta, true, true);
+  });
+  var start = indexOf(window.location.hash.slice(1));
+  select(start === -1 ? 0 : start, false, false);
+})();</script>
+</body>
+</html>

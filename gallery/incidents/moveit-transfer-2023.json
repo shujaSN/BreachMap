@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "id": "moveit-transfer-2023",
+  "title": "MOVEit Transfer mass exploitation (CVE-2023-34362)",
+  "summary": "From late May 2023, attackers abused a previously unknown SQL injection flaw (CVE-2023-34362) in Progress MOVEit Transfer, a file transfer app that sits on the internet. They planted a web shell called LEMURLOOT and stole stored files at scale before a fix existed. CISA and FBI tie the campaign to the CL0P ransomware gang (TA505), which then pressed victims through its leak site. Thousands of organizations were hit, many through vendors that used MOVEit.",
+  "dates": {
+    "started": "2023-05-27",
+    "discovered": "2023-05",
+    "disclosed": "2023-05-31"
+  },
+  "identifiers": {
+    "cve": ["CVE-2023-34362"]
+  },
+  "entities": [
+    {
+      "id": "cl0p",
+      "name": "Attackers attributed to CL0P (TA505)",
+      "kind": "attacker"
+    },
+    {
+      "id": "moveit-app",
+      "name": "MOVEit Transfer web app (internet-facing)",
+      "kind": "system"
+    },
+    {
+      "id": "moveit-db",
+      "name": "MOVEit Transfer database",
+      "kind": "system"
+    },
+    {
+      "id": "moveit-server",
+      "name": "MOVEit Transfer Windows server",
+      "kind": "system"
+    },
+    {
+      "id": "azure-storage",
+      "name": "Linked Azure Blob Storage",
+      "kind": "system"
+    },
+    {
+      "id": "victim-orgs",
+      "name": "MOVEit customers and people in their files",
+      "kind": "victim"
+    }
+  ],
+  "steps": [
+    {
+      "id": "exploit-sql-injection",
+      "title": "Abuse an unknown SQL injection flaw over the web",
+      "description": "From about 27 May 2023 the attackers sent crafted web requests to MOVEit Transfer servers exposed to the internet. A flaw in the web app let them, without logging in, mix their own database instructions into the queries the app sends to its database. No fix existed yet, so every exposed version was open. Progress published its advisory on 31 May 2023.",
+      "phase": "initial-access",
+      "techniqueId": "T1190",
+      "from": "cl0p",
+      "to": "moveit-app",
+      "confidence": "confirmed",
+      "sourceIds": ["progress-advisory", "cve-record", "cisa-fbi-aa23-158a", "mandiant-report"]
+    },
+    {
+      "id": "gain-admin-control",
+      "title": "Turn database access into admin-level control",
+      "description": "Progress and the CVE record confirm the flaw let an outsider learn the layout and contents of the MOVEit database and change or delete records. Huntress, which rebuilt the attack, reports that this was used to get administrator-level access inside the app. That second part comes from research, not from the vendor.",
+      "phase": "privilege-escalation",
+      "from": "moveit-app",
+      "to": "moveit-db",
+      "confidence": "reported",
+      "sourceIds": ["progress-advisory", "cve-record", "huntress-analysis"]
+    },
+    {
+      "id": "run-code-on-server",
+      "title": "Make the server run attacker code",
+      "description": "Huntress reports that the admin-level access was then used to make the server run the attackers' own code, under a service account with local administrator rights. The vendor advisory does not describe this chain. CISA and FBI only confirm that the attackers went on to install files on the server.",
+      "phase": "execution",
+      "from": "moveit-app",
+      "to": "moveit-server",
+      "confidence": "reported",
+      "sourceIds": ["huntress-analysis", "cisa-fbi-aa23-158a"]
+    },
+    {
+      "id": "plant-web-shell",
+      "title": "Plant the LEMURLOOT web shell",
+      "description": "The attackers dropped a web shell, a hidden web page that takes their commands, named human2.aspx so it looked like the real MOVEit file human.aspx. CISA and FBI call it LEMURLOOT. It only answered requests that carried a secret password, so the attackers kept sole use of it.",
+      "phase": "persistence",
+      "techniqueId": "T1505.003",
+      "from": "cl0p",
+      "to": "moveit-server",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-fbi-aa23-158a", "mandiant-report", "progress-advisory"]
+    },
+    {
+      "id": "create-admin-account",
+      "title": "Add a fake 'Health Check Service' admin account",
+      "description": "Through the web shell the attackers could add a MOVEit administrator with a random username and the display name Health Check Service, and could delete such accounts again. CISA warns these accounts live in the database, so a rebuilt server that reuses the old database can still hold them.",
+      "phase": "persistence",
+      "techniqueId": "T1136",
+      "from": "moveit-server",
+      "to": "moveit-db",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-fbi-aa23-158a", "mandiant-report"]
+    },
+    {
+      "id": "map-data",
+      "title": "List the database, files and folders",
+      "description": "The web shell could list the contents of the underlying database and the files and folders stored in MOVEit, and fetch a file by its name. This showed the attackers what each victim held.",
+      "phase": "discovery",
+      "from": "moveit-server",
+      "to": "moveit-db",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-fbi-aa23-158a", "mandiant-report"]
+    },
+    {
+      "id": "steal-azure-keys",
+      "title": "Read Azure Blob Storage settings and keys",
+      "description": "On servers that keep files in Microsoft Azure, the web shell could read the app settings that hold the storage account details and access key. Mandiant warns this may have let the attackers take files straight from Azure as well.",
+      "phase": "credential-access",
+      "from": "moveit-server",
+      "to": "azure-storage",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-fbi-aa23-158a", "mandiant-report", "progress-advisory"]
+    },
+    {
+      "id": "exfiltrate-files",
+      "title": "Download stored files in bulk",
+      "description": "The attackers pulled out files that users had uploaded to MOVEit, sent back through the web shell in compressed form. Mandiant saw large amounts taken, sometimes within minutes of the web shell going in. Rapid7 found data theft going back to at least 28 May 2023.",
+      "phase": "exfiltration",
+      "techniqueId": "T1041",
+      "from": "moveit-server",
+      "to": "cl0p",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-fbi-aa23-158a", "mandiant-report", "rapid7-timeline"]
+    },
+    {
+      "id": "extort-victims",
+      "title": "Pressure victims through the CL0P leak site",
+      "description": "On 6 June 2023 a post on the CL0P leak site claimed the attacks and told victims to get in touch by 14 June or see their data published. CISA and FBI say CL0P now mostly steals data to extort rather than encrypting it. Mandiant links the activity to the FIN11 group, and Rapid7 notes Microsoft tied it to Lace Tempest.",
+      "phase": "impact",
+      "from": "cl0p",
+      "to": "victim-orgs",
+      "confidence": "reported",
+      "sourceIds": ["mandiant-report", "rapid7-timeline", "cisa-fbi-aa23-158a"]
+    }
+  ],
+  "impact": {
+    "description": "Files were stolen from MOVEit servers in many sectors and countries, led by the United States and Canada, with education, health and finance hit hardest. Many organizations were exposed only through a vendor or contractor that ran MOVEit. Emsisoft's tally from breach notices, filings and the leak site reached 2,773 organizations and about 95.8 million people by June 2024, though some people are counted more than once.",
+    "sourceIds": ["emsisoft-stats", "mandiant-report"]
+  },
+  "defenses": [
+    {
+      "id": "patch-moveit",
+      "action": "Install the fixed MOVEit Transfer release for your version branch, apply the later June 2023 fixes too, and move off unsupported versions.",
+      "stepIds": ["exploit-sql-injection", "gain-admin-control", "run-code-on-server"],
+      "sourceIds": ["progress-advisory", "cve-record", "huntress-analysis"]
+    },
+    {
+      "id": "block-web-access",
+      "action": "Until patched, block inbound HTTP and HTTPS to the MOVEit server at the firewall, accepting that the web interface and APIs stop working while SFTP and FTPS keep running.",
+      "stepIds": ["exploit-sql-injection"],
+      "sourceIds": ["progress-advisory", "huntress-analysis"]
+    },
+    {
+      "id": "limit-exposure",
+      "action": "Patch internet-facing systems listed in CISA's Known Exploited Vulnerabilities catalog first, and allow remote access to file transfer servers only from trusted addresses.",
+      "stepIds": ["exploit-sql-injection"],
+      "sourceIds": ["cisa-fbi-aa23-158a", "progress-advisory"]
+    },
+    {
+      "id": "hunt-web-shell",
+      "action": "Look for human2.aspx or other new files in the MOVEit web folder, extra compiled ASP.NET files and new script files in temp folders. Watch for the web server starting unexpected processes. Remove what you find and check again after patching.",
+      "stepIds": ["run-code-on-server", "plant-web-shell"],
+      "sourceIds": ["progress-advisory", "huntress-analysis", "cisa-fbi-aa23-158a"]
+    },
+    {
+      "id": "clean-accounts",
+      "action": "Delete unknown MOVEit accounts such as Health Check Service, end active sessions and reset service account passwords. Audit the database as well, since a rebuilt server can inherit attacker accounts from it.",
+      "stepIds": ["create-admin-account"],
+      "sourceIds": ["progress-advisory", "cisa-fbi-aa23-158a"]
+    },
+    {
+      "id": "review-logs",
+      "action": "Keep web and MOVEit logging on, and review IIS and MOVEit logs for requests to the web shell, large downloads, or downloads from unknown IP addresses.",
+      "stepIds": ["map-data", "exfiltrate-files"],
+      "sourceIds": ["progress-advisory", "huntress-analysis", "mandiant-report"]
+    },
+    {
+      "id": "rotate-azure-keys",
+      "action": "If MOVEit stores files in Azure, check Azure logs for use of the storage keys and rotate any keys the server held.",
+      "stepIds": ["steal-azure-keys"],
+      "sourceIds": ["progress-advisory"]
+    },
+    {
+      "id": "report-not-pay",
+      "action": "Report the theft to the authorities, such as the FBI, IC3 or CISA in the US. CISA and FBI do not encourage paying the extortionists.",
+      "stepIds": ["extort-victims"],
+      "sourceIds": ["cisa-fbi-aa23-158a"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "progress-advisory",
+      "url": "https://community.progress.com/s/article/MOVEit-Transfer-Critical-Vulnerability-31May2023",
+      "title": "MOVEit Transfer Critical Vulnerability (May 2023) (CVE-2023-34362)",
+      "publisher": "Progress Software",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cve-record",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2023-34362",
+      "title": "CVE-2023-34362 record",
+      "publisher": "CVE Program (MITRE)",
+      "type": "cve",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-fbi-aa23-158a",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a",
+      "title": "#StopRansomware: CL0P Ransomware Gang Exploits CVE-2023-34362 MOVEit Vulnerability",
+      "publisher": "CISA and FBI",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "mandiant-report",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/zero-day-moveit-data-theft",
+      "title": "Zero-Day Vulnerability in MOVEit Transfer Exploited for Data Theft",
+      "publisher": "Mandiant (Google Cloud)",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "huntress-analysis",
+      "url": "https://www.huntress.com/blog/moveit-transfer-critical-vulnerability-rapid-response",
+      "title": "MOVEit Transfer Critical Vulnerability CVE-2023-34362 Rapid Response",
+      "publisher": "Huntress",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "rapid7-timeline",
+      "url": "https://rapid7.com/blog/post/2023/06/14/etr-cve-2023-34362-moveit-vulnerability-timeline-of-events",
+      "title": "CVE-2023-34362: MOVEit Vulnerability Timeline of Events",
+      "publisher": "Rapid7",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "emsisoft-stats",
+      "url": "https://emsisoft.com/en/blog/44123/unpacking-the-moveit-breach-statistics-and-analysis/",
+      "title": "Unpacking the MOVEit Breach: Statistics and Analysis",
+      "publisher": "Emsisoft",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    }
+  ],
+  "provenance": {
+    "createdBy": "skill",
+    "skillVersion": "0.1.0",
+    "createdAt": "2026-11-25"
+  }
+}

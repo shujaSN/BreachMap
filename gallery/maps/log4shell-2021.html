@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-Tz+vm3gFritNJm/bbNjZUfdk8AUsnvc+oIjDNo3Ms2A=&#39;; style-src &#39;sha256-fQ+IkBQak1A41tcEX6uA7qCH4YdBzxel/5DVFY4bZuQ=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⁨Log4Shell: remote code execution in Apache Log4j 2 (CVE-2021-44228)⁩ · Breachmap</title>
+<style>:root{color-scheme:light dark;--bg:#ffffff;--card:#f4f5f7;--fg:#1b1c1e;--muted:#4b4f56;--line:#767a80;--accent:#0b57d0;--accent-bg:#e3ecfb;--reported:#8a4b00;--disputed:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#121316;--card:#1d1f23;--fg:#e9eaec;--muted:#b4b8bf;--line:#8e939a;--accent:#8ab4f8;--accent-bg:#1e2a3f;--reported:#f2b866;--disputed:#f2a29b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
+header.top,main,footer{max-width:72rem;margin:0 auto;padding:1.5rem}
+h1{font-size:1.9rem;line-height:1.2;margin:.25rem 0 .75rem}
+h2{font-size:1.35rem;margin:2rem 0 1rem}
+h3{font-size:1.05rem;margin:0 0 .35rem}
+.kicker{margin:0;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.summary{max-width:60ch;font-size:1.1rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 2rem;margin:1rem 0 0}
+.facts dt{color:var(--muted);font-size:.8rem}
+.facts dd{margin:0;font-weight:600}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#flow{display:grid;gap:1rem 2rem}
+@media (min-width:60rem){#flow{grid-template-columns:minmax(0,max-content) minmax(22rem,1fr);align-items:start}#flow h2,#flow .controls{grid-column:1/-1}.diagram{position:sticky;top:1rem;max-height:calc(100vh - 2rem)}}
+.diagram{margin:0;overflow:auto;background:var(--card);border-radius:8px;padding:.5rem}
+.diagram svg{display:block}
+.lane-label{fill:var(--fg);font-size:13px;font-weight:600;text-anchor:middle}
+.lifeline{stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 5}
+.arrow line{stroke:var(--fg);stroke-width:2}
+.arrow circle{fill:var(--fg)}
+#arrowhead path{fill:var(--fg);fill:context-stroke}
+.arrow.reported line{stroke:var(--reported);stroke-dasharray:8 5}
+.arrow.reported circle{fill:var(--reported)}
+.arrow.disputed line{stroke:var(--disputed);stroke-dasharray:2 4}
+.arrow.disputed circle{fill:var(--disputed)}
+.step-n{fill:var(--fg);font-size:12px;font-weight:700;text-anchor:middle}
+.arrow[aria-current=step] line{stroke:var(--accent);stroke-width:4}
+.arrow[aria-current=step] circle,.arrow[aria-current=step] .step-n{fill:var(--accent)}
+.steps{list-style:none;margin:0;padding:0}
+.step{background:var(--card);border-left:4px solid transparent;border-radius:6px;margin:0 0 .75rem;padding:.75rem 1rem;scroll-margin:1rem}
+html:not(.js) .step:target,.step[aria-current=step]{border-left-color:var(--accent)}
+.n{display:inline-block;min-width:1.7em;margin-right:.35rem;border-radius:999px;background:var(--accent);color:var(--bg);text-align:center;font-size:.85rem}
+.meta,.cites,.actors{margin:.25rem 0;color:var(--muted);font-size:.9rem}
+.technique{margin-left:.4rem}
+.badge{margin-left:.4rem;padding:0 .4rem;border:1px solid currentColor;border-radius:4px;font-weight:600}
+.badge.reported{color:var(--reported)}
+.badge.disputed{color:var(--disputed)}
+.checklist{list-style:none;padding:0}
+.checklist li{margin:0 0 .75rem}
+.checklist label{display:flex;gap:.6rem;align-items:flex-start;font-weight:600}
+.checklist input{width:1.15rem;height:1.15rem;margin-top:.2rem;accent-color:var(--accent)}
+.sources{padding-left:1.5rem}
+.sources li{margin:0 0 .5rem;padding:.2rem .4rem;border-radius:4px;scroll-margin:1rem}
+html:not(.js) .sources li:target,.sources li.hl{background:var(--accent-bg)}
+.source-meta{color:var(--muted);font-size:.9rem}
+.controls{display:none}
+.js .controls{display:flex;gap:.75rem;align-items:center}
+.controls button{font:inherit;padding:.35rem .9rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+.controls button:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}</style>
+</head>
+<body>
+<header class="top">
+<p class="kicker">Breachmap attack map</p>
+<h1>Log4Shell: remote code execution in Apache Log4j 2 (CVE-2021-44228)</h1>
+<p class="summary">Log4Shell is a critical flaw in Apache Log4j 2, a Java logging library built into thousands of products. Versions 2.0-beta9 to 2.14.1 resolved JNDI lookups found inside logged text, so an unauthenticated attacker who got crafted text logged could make the server fetch and run code from a server the attacker controlled. After details went public in December 2021, mass scanning followed, then coin miners, botnets, ransomware and suspected state-backed intrusions.</p>
+<dl class="facts">
+<div><dt>Started</dt><dd>2021-12-01</dd></div>
+<div><dt>Discovered</dt><dd>2021-11-24</dd></div>
+<div><dt>Disclosed</dt><dd>2021-12-10</dd></div>
+<div><dt>CVE</dt><dd>CVE-2021-44228</dd></div>
+</dl>
+</header>
+<main>
+<section id="flow" aria-labelledby="flow-title">
+<h2 id="flow-title">Attack flow</h2>
+<div class="controls" role="group" aria-label="Step navigation"><button type="button" id="nav-prev" aria-keyshortcuts="ArrowLeft">Previous step</button><span id="nav-status" aria-live="polite"></span><button type="button" id="nav-next" aria-keyshortcuts="ArrowRight">Next step</button><span class="hint">or use ← →</span></div>
+<figure class="diagram">
+<svg viewBox="0 0 848 704" width="848" height="704" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: 11 steps between 5 entities</title>
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>
+<g class="lane"><title>Attackers (criminal and suspected state-backed)</title><text class="lane-label" x="104" y="36">Attackers (criminal…</text><line class="lifeline" x1="104" y1="64" x2="104" y2="680"></line></g>
+<g class="lane"><title>Internet-facing Java application or appliance</title><text class="lane-label" x="264" y="36">Internet-facing Jav…</text><line class="lifeline" x1="264" y1="64" x2="264" y2="680"></line></g>
+<g class="lane"><title>Apache Log4j 2 (log4j-core)</title><text class="lane-label" x="424" y="36">Apache Log4j 2 (log…</text><line class="lifeline" x1="424" y1="64" x2="424" y2="680"></line></g>
+<g class="lane"><title>Attacker-controlled LDAP/JNDI server</title><text class="lane-label" x="584" y="36">Attacker-controlled…</text><line class="lifeline" x1="584" y1="64" x2="584" y2="680"></line></g>
+<g class="lane"><title>Victim&#39;s internal network</title><text class="lane-label" x="744" y="36">Victim&#39;s internal n…</text><line class="lifeline" x1="744" y1="64" x2="744" y2="680"></line></g>
+<a class="arrow confirmed" href="#step-mass-scanning" data-step="step-mass-scanning" tabindex="-1"><title>Step 1: ⁨Scan the internet for vulnerable services⁩</title><line x1="104" y1="92" x2="264" y2="92" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="84">1</text></a>
+<a class="arrow confirmed" href="#step-inject-lookup" data-step="step-inject-lookup" tabindex="-1"><title>Step 2: ⁨Get crafted lookup text written to the log⁩</title><line x1="104" y1="148" x2="264" y2="148" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="140">2</text></a>
+<a class="arrow confirmed" href="#step-jndi-callback" data-step="step-jndi-callback" tabindex="-1"><title>Step 3: ⁨Log4j resolves the lookup and calls the attacker&#39;s server⁩</title><line x1="424" y1="204" x2="584" y2="204" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="196">3</text></a>
+<a class="arrow confirmed" href="#step-remote-code-load" data-step="step-remote-code-load" tabindex="-1"><title>Step 4: ⁨The attacker&#39;s server returns code that the app runs⁩</title><line x1="584" y1="260" x2="264" y2="260" marker-end="url(#arrowhead)"></line><text class="step-n" x="424" y="252">4</text></a>
+<a class="arrow reported" href="#step-leak-secrets" data-step="step-leak-secrets" tabindex="-1"><title>Step 5: ⁨Leak secrets through the lookup itself⁩ (reported)</title><line x1="424" y1="316" x2="584" y2="316" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="308">5</text></a>
+<a class="arrow confirmed" href="#step-coin-miners-botnets" data-step="step-coin-miners-botnets" tabindex="-1"><title>Step 6: ⁨Install coin miners and botnet malware⁩</title><line x1="104" y1="372" x2="264" y2="372" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="364">6</text></a>
+<a class="arrow confirmed" href="#step-remote-access-tools" data-step="step-remote-access-tools" tabindex="-1"><title>Step 7: ⁨Plant web shells and remote access tools⁩</title><line x1="104" y1="428" x2="264" y2="428" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="420">7</text></a>
+<a class="arrow confirmed" href="#step-lateral-movement" data-step="step-lateral-movement" tabindex="-1"><title>Step 8: ⁨Move deeper into the network over RDP⁩</title><line x1="264" y1="484" x2="744" y2="484" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="476">8</text></a>
+<a class="arrow reported" href="#step-exfiltrate-data" data-step="step-exfiltrate-data" tabindex="-1"><title>Step 9: ⁨Collect and send out sensitive data⁩ (reported)</title><line x1="744" y1="540" x2="104" y2="540" marker-end="url(#arrowhead)"></line><text class="step-n" x="424" y="532">9</text></a>
+<a class="arrow reported" href="#step-ransomware" data-step="step-ransomware" tabindex="-1"><title>Step 10: ⁨Sell access or deploy ransomware⁩ (reported)</title><line x1="104" y1="596" x2="744" y2="596" marker-end="url(#arrowhead)"></line><text class="step-n" x="424" y="588">10</text></a>
+<a class="arrow reported" href="#step-state-actors" data-step="step-state-actors" tabindex="-1"><title>Step 11: ⁨State-linked groups exploit unpatched servers⁩ (reported)</title><line x1="104" y1="652" x2="264" y2="652" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="644">11</text></a>
+</svg>
+</figure>
+<ol class="steps">
+<li class="step" id="step-mass-scanning" data-sources="src-cisa-aa21-356a src-csrb-report">
+<h3><span class="n">1</span> <bdi>Scan the internet for vulnerable services</bdi></h3>
+<p class="meta"><span class="phase">Reconnaissance</span> <a class="technique" href="https://attack.mitre.org/techniques/T1595/002/" rel="noopener noreferrer">T1595.002</a></p>
+<p class="actors"><bdi>Attackers (criminal and suspected state-backed)</bdi> → <bdi>Internet-facing Java application or appliance</bdi></p>
+<p>Soon after the flaw became public, attackers and researchers swept the internet for systems running vulnerable Log4j. The FBI saw widespread scanning aimed at gaining network access. The CSRB notes vendors logged millions of probes, some automated through botnets, which made malicious traffic hard to tell apart from research scans.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-csrb-report">[6]</a></p>
+</li>
+<li class="step" id="step-inject-lookup" data-sources="src-apache-security src-cve-record src-microsoft-guidance src-cloudflare-preexploit">
+<h3><span class="n">2</span> <bdi>Get crafted lookup text written to the log</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1190/" rel="noopener noreferrer">T1190</a></p>
+<p class="actors"><bdi>Attackers (criminal and suspected state-backed)</bdi> → <bdi>Internet-facing Java application or appliance</bdi></p>
+<p>The attacker places a specially formed lookup expression into any input the target is likely to log, such as a web request header, a form field or a chat message. No account and no user action are needed. Attackers soon disguised this text with encoding tricks to slip past simple filters.</p>
+<p class="cites">Sources: <a href="#src-apache-security">[1]</a> <a href="#src-cve-record">[2]</a> <a href="#src-microsoft-guidance">[7]</a> <a href="#src-cloudflare-preexploit">[8]</a></p>
+</li>
+<li class="step" id="step-jndi-callback" data-sources="src-apache-security src-cve-record src-csrb-report src-microsoft-guidance">
+<h3><span class="n">3</span> <bdi>Log4j resolves the lookup and calls the attacker&#39;s server</bdi></h3>
+<p class="meta"><span class="phase">Execution</span></p>
+<p class="actors"><bdi>Apache Log4j 2 (log4j-core)</bdi> → <bdi>Attacker-controlled LDAP/JNDI server</bdi></p>
+<p>When the app passes that text to Log4j, vulnerable versions treat the expression as a JNDI lookup and resolve it. The server then opens an outbound connection, for example over LDAP, to an address the attacker picked. This lookup feature was added in 2013. The callback alone also tells the attacker which hosts are vulnerable, and many campaigns used it to fingerprint targets first.</p>
+<p class="cites">Sources: <a href="#src-apache-security">[1]</a> <a href="#src-cve-record">[2]</a> <a href="#src-csrb-report">[6]</a> <a href="#src-microsoft-guidance">[7]</a></p>
+</li>
+<li class="step" id="step-remote-code-load" data-sources="src-apache-security src-cve-record src-cisa-aa21-356a src-csrb-report">
+<h3><span class="n">4</span> <bdi>The attacker&#39;s server returns code that the app runs</bdi></h3>
+<p class="meta"><span class="phase">Execution</span></p>
+<p class="actors"><bdi>Attacker-controlled LDAP/JNDI server</bdi> → <bdi>Internet-facing Java application or appliance</bdi></p>
+<p>The attacker&#39;s server answers the lookup with code of its choosing. The vulnerable process loads and runs it with the application&#39;s own rights, which gives the attacker full control of that system. Apache rated this 10.0, the highest score, because it is easy to pull off and needs no privileges or user interaction.</p>
+<p class="cites">Sources: <a href="#src-apache-security">[1]</a> <a href="#src-cve-record">[2]</a> <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-csrb-report">[6]</a></p>
+</li>
+<li class="step" id="step-leak-secrets" data-sources="src-cloudflare-preexploit src-microsoft-guidance">
+<h3><span class="n">5</span> <bdi>Leak secrets through the lookup itself</bdi></h3>
+<p class="meta"><span class="phase">Exfiltration</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Apache Log4j 2 (log4j-core)</bdi> → <bdi>Attacker-controlled LDAP/JNDI server</bdi></p>
+<p>Some attackers did not need to run code at all. They used Log4j&#39;s other lookup features to fold data such as environment variables, system details or credentials into the outbound request, so the secrets reached the attacker&#39;s server as part of the callback. Microsoft also saw data leakage through the flaw without any payload being dropped.</p>
+<p class="cites">Sources: <a href="#src-cloudflare-preexploit">[8]</a> <a href="#src-microsoft-guidance">[7]</a></p>
+</li>
+<li class="step" id="step-coin-miners-botnets" data-sources="src-cisa-aa21-356a src-microsoft-guidance src-csrb-report">
+<h3><span class="n">6</span> <bdi>Install coin miners and botnet malware</bdi></h3>
+<p class="meta"><span class="phase">Impact</span> <a class="technique" href="https://attack.mitre.org/techniques/T1496/" rel="noopener noreferrer">T1496</a></p>
+<p class="actors"><bdi>Attackers (criminal and suspected state-backed)</bdi> → <bdi>Internet-facing Java application or appliance</bdi></p>
+<p>Much of the early follow-on activity aimed at quick profit. The FBI saw attackers deploy cryptocurrency miners and botnet malware on vulnerable systems. Microsoft reported the flaw being quickly added to existing botnets such as Mirai, and the CSRB cites Cisco Talos seeing the same.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-microsoft-guidance">[7]</a> <a href="#src-csrb-report">[6]</a></p>
+</li>
+<li class="step" id="step-remote-access-tools" data-sources="src-cisa-aa22-174a src-microsoft-guidance">
+<h3><span class="n">7</span> <bdi>Plant web shells and remote access tools</bdi></h3>
+<p class="meta"><span class="phase">Command and Control</span></p>
+<p class="actors"><bdi>Attackers (criminal and suspected state-backed)</bdi> → <bdi>Internet-facing Java application or appliance</bdi></p>
+<p>In more targeted intrusions, attackers used the foothold to install tools for lasting control. CISA and the U.S. Coast Guard Cyber Command found loader malware with remote control features and a web shell on hacked VMware Horizon servers. Microsoft also saw Cobalt Strike, reverse shells and other remote access tools.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa22-174a">[5]</a> <a href="#src-microsoft-guidance">[7]</a></p>
+</li>
+<li class="step" id="step-lateral-movement" data-sources="src-cisa-aa22-174a src-microsoft-guidance">
+<h3><span class="n">8</span> <bdi>Move deeper into the network over RDP</bdi></h3>
+<p class="meta"><span class="phase">Lateral Movement</span> <a class="technique" href="https://attack.mitre.org/techniques/T1021/001/" rel="noopener noreferrer">T1021.001</a></p>
+<p class="actors"><bdi>Internet-facing Java application or appliance</bdi> → <bdi>Victim&#39;s internal network</bdi></p>
+<p>In one case CISA described, the attackers used administrator credentials, obtained in a way investigators could not determine, and Remote Desktop Protocol to reach other hosts, including a security management server, a certificate server and a database with sensitive law enforcement data. Microsoft separately saw Cobalt Strike used for credential theft and lateral movement.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa22-174a">[5]</a> <a href="#src-microsoft-guidance">[7]</a></p>
+</li>
+<li class="step" id="step-exfiltrate-data" data-sources="src-cisa-aa22-174a">
+<h3><span class="n">9</span> <bdi>Collect and send out sensitive data</bdi></h3>
+<p class="meta"><span class="phase">Exfiltration</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Victim&#39;s internal network</bdi> → <bdi>Attackers (criminal and suspected state-backed)</bdi></p>
+<p>In the same VMware Horizon case, the attackers gathered data from the production environment, and CISA says they likely exfiltrated it. A security management server sent more than 130 GB of data during that period, and archives of law enforcement investigation data were found.</p>
+<p class="cites">Sources: <a href="#src-cisa-aa22-174a">[5]</a></p>
+</li>
+<li class="step" id="step-ransomware" data-sources="src-microsoft-guidance src-csrb-report">
+<h3><span class="n">10</span> <bdi>Sell access or deploy ransomware</bdi></h3>
+<p class="meta"><span class="phase">Impact</span> <a class="technique" href="https://attack.mitre.org/techniques/T1486/" rel="noopener noreferrer">T1486</a> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Attackers (criminal and suspected state-backed)</bdi> → <bdi>Victim&#39;s internal network</bdi></p>
+<p>Microsoft reported access brokers using the flaw to break into networks and then selling that access to ransomware affiliates, and ransomware such as Khonsari and NightSky delivered through it. The CSRB notes a security firm investigated several ransomware incidents that used Log4j between January and March 2022.</p>
+<p class="cites">Sources: <a href="#src-microsoft-guidance">[7]</a> <a href="#src-csrb-report">[6]</a></p>
+</li>
+<li class="step" id="step-state-actors" data-sources="src-microsoft-guidance src-cisa-aa22-174a">
+<h3><span class="n">11</span> <bdi>State-linked groups exploit unpatched servers</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1190/" rel="noopener noreferrer">T1190</a> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Attackers (criminal and suspected state-backed)</bdi> → <bdi>Internet-facing Java application or appliance</bdi></p>
+<p>Microsoft said several nation-state groups it tracks, from China, Iran, North Korea and Turkey, used the flaw, naming PHOSPHORUS (Iran) and HAFNIUM (China). CISA and the Coast Guard said actors including state-sponsored APT groups kept exploiting unpatched VMware Horizon servers into 2022.</p>
+<p class="cites">Sources: <a href="#src-microsoft-guidance">[7]</a> <a href="#src-cisa-aa22-174a">[5]</a></p>
+</li>
+</ol>
+</section>
+<section id="impact" aria-labelledby="impact-title">
+<h2 id="impact-title">Impact</h2>
+<p>Log4j is built into thousands of software packages, so the flaw touched almost every networked organization, and many could not tell where they used it. Apache rated it 10.0, the maximum severity. Response was costly: one U.S. federal cabinet department spent 33,000 hours on it. Yet the CSRB found exploitation lower than experts feared and knew of no significant Log4j attack on critical infrastructure at the time. It calls Log4j an endemic vulnerability that may stay in systems for a decade or longer.</p>
+<p class="cites">Sources: <a href="#src-csrb-report">[6]</a> <a href="#src-apache-security">[1]</a></p>
+</section>
+<section id="defenses" aria-labelledby="defenses-title">
+<h2 id="defenses-title">Defenses</h2>
+<ul class="checklist">
+<li id="def-upgrade-log4j"><label><input type="checkbox"> <span>Upgrade log4j-core itself to a fixed release (CISA lists 2.17.1 for Java 8, 2.12.4 for Java 7, 2.3.2 for Java 6) and install vendor updates for products that bundle it. Updating Java alone does not fix the flaw.</span></label>
+<p class="cites">Addresses: <a href="#step-inject-lookup">Step 2</a>, <a href="#step-jndi-callback">Step 3</a>, <a href="#step-remote-code-load">Step 4</a>, <a href="#step-leak-secrets">Step 5</a> · Sources: <a href="#src-cisa-guidance">[3]</a> <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-apache-security">[1]</a></p></li>
+<li id="def-inventory-assets"><label><input type="checkbox"> <span>Keep an up-to-date asset and software inventory, including software bills of materials, so every copy of Log4j can be found fast, also inside JAR files, containers, in-house code and systems that are not internet-facing.</span></label>
+<p class="cites">Addresses: <a href="#step-mass-scanning">Step 1</a>, <a href="#step-inject-lookup">Step 2</a> · Sources: <a href="#src-csrb-report">[6]</a> <a href="#src-cisa-guidance">[3]</a> <a href="#src-microsoft-guidance">[7]</a></p></li>
+<li id="def-disable-lookups"><label><input type="checkbox"> <span>If you cannot patch yet, remove the JNDI lookup class from the library as a short-term workaround, then patch as soon as possible.</span></label>
+<p class="cites">Addresses: <a href="#step-jndi-callback">Step 3</a>, <a href="#step-remote-code-load">Step 4</a>, <a href="#step-leak-secrets">Step 5</a> · Sources: <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-microsoft-guidance">[7]</a></p></li>
+<li id="def-egress-filtering"><label><input type="checkbox"> <span>Block or allowlist outbound LDAP and RMI traffic from servers and send their DNS only to approved resolvers, so a vulnerable host cannot reach the attacker&#39;s server.</span></label>
+<p class="cites">Addresses: <a href="#step-jndi-callback">Step 3</a>, <a href="#step-remote-code-load">Step 4</a>, <a href="#step-leak-secrets">Step 5</a> · Sources: <a href="#src-cisa-aa21-356a">[4]</a></p></li>
+<li id="def-waf-and-segmentation"><label><input type="checkbox"> <span>Put internet-facing services in a segregated DMZ behind updated web application firewall rules, and take systems that cannot be patched or mitigated off the network.</span></label>
+<p class="cites">Addresses: <a href="#step-mass-scanning">Step 1</a>, <a href="#step-inject-lookup">Step 2</a>, <a href="#step-state-actors">Step 11</a>, <a href="#step-lateral-movement">Step 8</a> · Sources: <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-cisa-aa22-174a">[5]</a> <a href="#src-cisa-guidance">[3]</a></p></li>
+<li id="def-assume-compromise"><label><input type="checkbox"> <span>Treat exposed systems that were not patched quickly as compromised: hunt for miners, web shells and remote access tools, review configuration and account changes since 1 December 2021, and follow incident response before patching.</span></label>
+<p class="cites">Addresses: <a href="#step-coin-miners-botnets">Step 6</a>, <a href="#step-remote-access-tools">Step 7</a>, <a href="#step-exfiltrate-data">Step 9</a>, <a href="#step-ransomware">Step 10</a> · Sources: <a href="#src-cisa-aa21-356a">[4]</a> <a href="#src-cisa-aa22-174a">[5]</a></p></li>
+<li id="def-limit-access"><label><input type="checkbox"> <span>Use multifactor authentication, strong passwords and least privilege so a single compromised server does not open the rest of the network.</span></label>
+<p class="cites">Addresses: <a href="#step-lateral-movement">Step 8</a> · Sources: <a href="#src-cisa-aa22-174a">[5]</a></p></li>
+</ul>
+</section>
+<section id="sources" aria-labelledby="sources-title">
+<h2 id="sources-title">Sources</h2>
+<ol class="sources">
+<li id="src-apache-security"><a href="https://logging.apache.org/log4j/2.x/security.html" rel="noopener noreferrer"><bdi>Security :: Apache Logging Services</bdi></a> <span class="source-meta"><bdi>Apache Software Foundation</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-cve-record"><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer"><bdi>CVE-2021-44228: Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints</bdi></a> <span class="source-meta"><bdi>CVE Program (CNA: Apache Software Foundation)</bdi> · cve · retrieved 2026-11-25</span></li>
+<li id="src-cisa-guidance"><a href="https://www.cisa.gov/news-events/news/apache-log4j-vulnerability-guidance" rel="noopener noreferrer"><bdi>Apache Log4j Vulnerability Guidance</bdi></a> <span class="source-meta"><bdi>Cybersecurity and Infrastructure Security Agency (CISA)</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-cisa-aa21-356a"><a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a" rel="noopener noreferrer"><bdi>Mitigating Log4Shell and Other Log4j-Related Vulnerabilities (AA21-356A)</bdi></a> <span class="source-meta"><bdi>CISA, FBI, NSA and international partners</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-cisa-aa22-174a"><a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-174a" rel="noopener noreferrer"><bdi>Malicious Cyber Actors Continue to Exploit Log4Shell in VMware Horizon Systems (AA22-174A)</bdi></a> <span class="source-meta"><bdi>CISA and U.S. Coast Guard Cyber Command</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-csrb-report"><a href="https://www.cisa.gov/sites/default/files/publications/CSRB-Report-on-Log4-July-11-2022_508.pdf" rel="noopener noreferrer"><bdi>Review of the December 2021 Log4j Event</bdi></a> <span class="source-meta"><bdi>Cyber Safety Review Board</bdi> · report · retrieved 2026-11-25</span></li>
+<li id="src-microsoft-guidance"><a href="https://www.microsoft.com/en-us/security/blog/2021/12/11/guidance-for-preventing-detecting-and-hunting-for-cve-2021-44228-log4j-2-exploitation/" rel="noopener noreferrer"><bdi>Guidance for preventing, detecting, and hunting for exploitation of the Log4j 2 vulnerability</bdi></a> <span class="source-meta"><bdi>Microsoft Threat Intelligence</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-cloudflare-preexploit"><a href="https://blog.cloudflare.com/exploitation-of-cve-2021-44228-before-public-disclosure-and-evolution-of-waf-evasion-patterns/" rel="noopener noreferrer"><bdi>Exploitation of Log4j CVE-2021-44228 before public disclosure and evolution of evasion and exfiltration</bdi></a> <span class="source-meta"><bdi>Cloudflare</bdi> · research · retrieved 2026-11-25</span></li>
+</ol>
+</section>
+</main>
+<footer>
+<p>Schema version 1 · Created by the Breachmap skill 0.1.0 on 2026-11-25 · Not reviewed yet · Made with Breachmap 0.1.0</p>
+</footer>
+<script>(function () {
+  var doc = document;
+  doc.documentElement.classList.add("js");
+  function all(selector) {
+    return Array.prototype.slice.call(doc.querySelectorAll(selector));
+  }
+  var steps = all("li.step");
+  var arrows = all("a.arrow");
+  var sources = all("ol.sources > li");
+  var status = doc.getElementById("nav-status");
+  var prev = doc.getElementById("nav-prev");
+  var next = doc.getElementById("nav-next");
+  var current = 0;
+  function indexOf(id) {
+    return steps.findIndex(function (s) { return s.id === id; });
+  }
+  function mark(el, on) {
+    if (on) el.setAttribute("aria-current", "step");
+    else el.removeAttribute("aria-current");
+  }
+  function select(i, scroll, focus) {
+    current = Math.max(0, Math.min(steps.length - 1, i));
+    var step = steps[current];
+    var cited = (step.getAttribute("data-sources") || "").split(" ");
+    steps.forEach(function (s) { mark(s, s === step); });
+    arrows.forEach(function (a) { mark(a, a.getAttribute("data-step") === step.id); });
+    sources.forEach(function (li) { li.classList.toggle("hl", cited.indexOf(li.id) !== -1); });
+    status.textContent = "Step " + (current + 1) + " of " + steps.length;
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length - 1;
+    if (focus) step.focus({ preventScroll: true });
+    if (scroll) step.scrollIntoView({ block: "nearest" });
+  }
+  steps.forEach(function (s, i) {
+    s.setAttribute("tabindex", "-1");
+    s.addEventListener("click", function () { select(i, false, false); });
+  });
+  prev.addEventListener("click", function () { select(current - 1, true, false); });
+  next.addEventListener("click", function () { select(current + 1, true, false); });
+  doc.addEventListener("click", function (e) {
+    var link = e.target.closest && e.target.closest("a[href^='#step-']");
+    var i = link ? indexOf(link.getAttribute("href").slice(1)) : -1;
+    if (i !== -1) select(i, false, false);
+  });
+  doc.addEventListener("keydown", function (e) {
+    var t = e.target;
+    var skip = t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest(".diagram")));
+    var delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!delta || skip || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    select(current + delta, true, true);
+  });
+  var start = indexOf(window.location.hash.slice(1));
+  select(start === -1 ? 0 : start, false, false);
+})();</script>
+</body>
+</html>

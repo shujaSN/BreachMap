@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-Tz+vm3gFritNJm/bbNjZUfdk8AUsnvc+oIjDNo3Ms2A=&#39;; style-src &#39;sha256-fQ+IkBQak1A41tcEX6uA7qCH4YdBzxel/5DVFY4bZuQ=&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⁨xz Utils backdoor (CVE-2024-3094)⁩ · Breachmap</title>
+<style>:root{color-scheme:light dark;--bg:#ffffff;--card:#f4f5f7;--fg:#1b1c1e;--muted:#4b4f56;--line:#767a80;--accent:#0b57d0;--accent-bg:#e3ecfb;--reported:#8a4b00;--disputed:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#121316;--card:#1d1f23;--fg:#e9eaec;--muted:#b4b8bf;--line:#8e939a;--accent:#8ab4f8;--accent-bg:#1e2a3f;--reported:#f2b866;--disputed:#f2a29b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
+header.top,main,footer{max-width:72rem;margin:0 auto;padding:1.5rem}
+h1{font-size:1.9rem;line-height:1.2;margin:.25rem 0 .75rem}
+h2{font-size:1.35rem;margin:2rem 0 1rem}
+h3{font-size:1.05rem;margin:0 0 .35rem}
+.kicker{margin:0;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.summary{max-width:60ch;font-size:1.1rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 2rem;margin:1rem 0 0}
+.facts dt{color:var(--muted);font-size:.8rem}
+.facts dd{margin:0;font-weight:600}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#flow{display:grid;gap:1rem 2rem}
+@media (min-width:60rem){#flow{grid-template-columns:minmax(0,max-content) minmax(22rem,1fr);align-items:start}#flow h2,#flow .controls{grid-column:1/-1}.diagram{position:sticky;top:1rem;max-height:calc(100vh - 2rem)}}
+.diagram{margin:0;overflow:auto;background:var(--card);border-radius:8px;padding:.5rem}
+.diagram svg{display:block}
+.lane-label{fill:var(--fg);font-size:13px;font-weight:600;text-anchor:middle}
+.lifeline{stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 5}
+.arrow line{stroke:var(--fg);stroke-width:2}
+.arrow circle{fill:var(--fg)}
+#arrowhead path{fill:var(--fg);fill:context-stroke}
+.arrow.reported line{stroke:var(--reported);stroke-dasharray:8 5}
+.arrow.reported circle{fill:var(--reported)}
+.arrow.disputed line{stroke:var(--disputed);stroke-dasharray:2 4}
+.arrow.disputed circle{fill:var(--disputed)}
+.step-n{fill:var(--fg);font-size:12px;font-weight:700;text-anchor:middle}
+.arrow[aria-current=step] line{stroke:var(--accent);stroke-width:4}
+.arrow[aria-current=step] circle,.arrow[aria-current=step] .step-n{fill:var(--accent)}
+.steps{list-style:none;margin:0;padding:0}
+.step{background:var(--card);border-left:4px solid transparent;border-radius:6px;margin:0 0 .75rem;padding:.75rem 1rem;scroll-margin:1rem}
+html:not(.js) .step:target,.step[aria-current=step]{border-left-color:var(--accent)}
+.n{display:inline-block;min-width:1.7em;margin-right:.35rem;border-radius:999px;background:var(--accent);color:var(--bg);text-align:center;font-size:.85rem}
+.meta,.cites,.actors{margin:.25rem 0;color:var(--muted);font-size:.9rem}
+.technique{margin-left:.4rem}
+.badge{margin-left:.4rem;padding:0 .4rem;border:1px solid currentColor;border-radius:4px;font-weight:600}
+.badge.reported{color:var(--reported)}
+.badge.disputed{color:var(--disputed)}
+.checklist{list-style:none;padding:0}
+.checklist li{margin:0 0 .75rem}
+.checklist label{display:flex;gap:.6rem;align-items:flex-start;font-weight:600}
+.checklist input{width:1.15rem;height:1.15rem;margin-top:.2rem;accent-color:var(--accent)}
+.sources{padding-left:1.5rem}
+.sources li{margin:0 0 .5rem;padding:.2rem .4rem;border-radius:4px;scroll-margin:1rem}
+html:not(.js) .sources li:target,.sources li.hl{background:var(--accent-bg)}
+.source-meta{color:var(--muted);font-size:.9rem}
+.controls{display:none}
+.js .controls{display:flex;gap:.75rem;align-items:center}
+.controls button{font:inherit;padding:.35rem .9rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+.controls button:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}</style>
+</head>
+<body>
+<header class="top">
+<p class="kicker">Breachmap attack map</p>
+<h1>xz Utils backdoor (CVE-2024-3094)</h1>
+<p class="summary">In March 2024 a developer found a hidden backdoor in xz Utils 5.6.0 and 5.6.1, a compression library used by many Linux systems. An account named Jia Tan had spent years earning trust and release rights in the project. The malicious code sat in disguised test files and in a build file found only in the release archives, and it targeted the OpenSSH server on some Linux distributions. It was caught while it was mostly in testing and rolling releases.</p>
+<dl class="facts">
+<div><dt>Started</dt><dd>2021-10</dd></div>
+<div><dt>Discovered</dt><dd>2024-03</dd></div>
+<div><dt>Disclosed</dt><dd>2024-03-29</dd></div>
+<div><dt>CVE</dt><dd>CVE-2024-3094</dd></div>
+</dl>
+</header>
+<main>
+<section id="flow" aria-labelledby="flow-title">
+<h2 id="flow-title">Attack flow</h2>
+<div class="controls" role="group" aria-label="Step navigation"><button type="button" id="nav-prev" aria-keyshortcuts="ArrowLeft">Previous step</button><span id="nav-status" aria-live="polite"></span><button type="button" id="nav-next" aria-keyshortcuts="ArrowRight">Next step</button><span class="hint">or use ← →</span></div>
+<figure class="diagram">
+<svg viewBox="0 0 1008 704" width="1008" height="704" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: 11 steps between 6 entities</title>
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>
+<g class="lane"><title>Jia Tan account</title><text class="lane-label" x="104" y="36">Jia Tan account</text><line class="lifeline" x1="104" y1="64" x2="104" y2="680"></line></g>
+<g class="lane"><title>Original xz Utils maintainer</title><text class="lane-label" x="264" y="36">Original xz Utils m…</text><line class="lifeline" x1="264" y1="64" x2="264" y2="680"></line></g>
+<g class="lane"><title>Pressure accounts on the xz mailing list</title><text class="lane-label" x="424" y="36">Pressure accounts o…</text><line class="lifeline" x1="424" y1="64" x2="424" y2="680"></line></g>
+<g class="lane"><title>xz Utils repository and releases</title><text class="lane-label" x="584" y="36">xz Utils repository…</text><line class="lifeline" x1="584" y1="64" x2="584" y2="680"></line></g>
+<g class="lane"><title>Linux distributions (testing and rolling builds)</title><text class="lane-label" x="744" y="36">Linux distributions…</text><line class="lifeline" x1="744" y1="64" x2="744" y2="680"></line></g>
+<g class="lane"><title>OpenSSH servers that load liblzma</title><text class="lane-label" x="904" y="36">OpenSSH servers tha…</text><line class="lifeline" x1="904" y1="64" x2="904" y2="680"></line></g>
+<a class="arrow confirmed" href="#step-build-trust" data-step="step-build-trust" tabindex="-1"><title>Step 1: ⁨Account builds trust with the maintainer over years⁩</title><line x1="104" y1="92" x2="264" y2="92" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="84">1</text></a>
+<a class="arrow reported" href="#step-pressure-maintainer" data-step="step-pressure-maintainer" tabindex="-1"><title>Step 2: ⁨Other accounts pressure the maintainer to hand over control⁩ (reported)</title><line x1="424" y1="148" x2="264" y2="148" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="140">2</text></a>
+<a class="arrow confirmed" href="#step-gain-release-access" data-step="step-gain-release-access" tabindex="-1"><title>Step 3: ⁨Jia Tan gains commit and release rights⁩</title><line x1="104" y1="204" x2="584" y2="204" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="196">3</text></a>
+<a class="arrow reported" href="#step-disable-fuzz-ifunc" data-step="step-disable-fuzz-ifunc" tabindex="-1"><title>Step 4: ⁨A fuzzing build setting is turned off⁩ (reported)</title><line x1="104" y1="260" x2="584" y2="260" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="252">4</text></a>
+<a class="arrow confirmed" href="#step-hide-payload-tests" data-step="step-hide-payload-tests" tabindex="-1"><title>Step 5: ⁨Hidden payload committed as binary test files⁩</title><line x1="104" y1="316" x2="584" y2="316" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="308">5</text></a>
+<a class="arrow confirmed" href="#step-tamper-release-tarballs" data-step="step-tamper-release-tarballs" tabindex="-1"><title>Step 6: ⁨Release archives ship a tampered build file⁩</title><line x1="104" y1="372" x2="584" y2="372" marker-end="url(#arrowhead)"></line><text class="step-n" x="344" y="364">6</text></a>
+<a class="arrow confirmed" href="#step-reach-distros" data-step="step-reach-distros" tabindex="-1"><title>Step 7: ⁨Backdoored versions reach Linux distributions⁩</title><line x1="584" y1="428" x2="744" y2="428" marker-end="url(#arrowhead)"></line><text class="step-n" x="664" y="420">7</text></a>
+<a class="arrow confirmed" href="#step-build-injection" data-step="step-build-injection" tabindex="-1"><title>Step 8: ⁨Package build injects code into liblzma⁩</title><line x1="584" y1="484" x2="744" y2="484" marker-end="url(#arrowhead)"></line><text class="step-n" x="664" y="476">8</text></a>
+<a class="arrow reported" href="#step-hide-from-analysis" data-step="step-hide-from-analysis" tabindex="-1"><title>Step 9: ⁨Backdoor checks its surroundings to stay hidden⁩ (reported)</title><line x1="104" y1="540" x2="904" y2="540" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="532">9</text></a>
+<a class="arrow confirmed" href="#step-hook-sshd" data-step="step-hook-sshd" tabindex="-1"><title>Step 10: ⁨Backdoor hooks OpenSSH login checks⁩</title><line x1="744" y1="596" x2="904" y2="596" marker-end="url(#arrowhead)"></line><text class="step-n" x="824" y="588">10</text></a>
+<a class="arrow reported" href="#step-remote-access" data-step="step-remote-access" tabindex="-1"><title>Step 11: ⁨Attacker could gain access to affected SSH servers⁩ (reported)</title><line x1="104" y1="652" x2="904" y2="652" marker-end="url(#arrowhead)"></line><text class="step-n" x="504" y="644">11</text></a>
+</svg>
+</figure>
+<ol class="steps">
+<li class="step" id="step-build-trust" data-sources="src-cisa-lessons src-xz-devel-2022 src-swtch-timeline">
+<h3><span class="n">1</span> <bdi>Account builds trust with the maintainer over years</bdi></h3>
+<p class="meta"><span class="phase">Resource Development</span></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>Original xz Utils maintainer</bdi></p>
+<p>From late 2021 an account named Jia Tan sent small, useful patches to the xz project and began working with its long-time maintainer away from the public list. CISA later described this as a threat actor spending several years earning the maintainer&#39;s trust in order to plant a backdoor. By mid 2022 the maintainer said Jia Tan might take a bigger role in the project.</p>
+<p class="cites">Sources: <a href="#src-cisa-lessons">[11]</a> <a href="#src-xz-devel-2022">[8]</a> <a href="#src-swtch-timeline">[9]</a></p>
+</li>
+<li class="step" id="step-pressure-maintainer" data-sources="src-xz-devel-2022 src-swtch-timeline src-openssf-alert">
+<h3><span class="n">2</span> <bdi>Other accounts pressure the maintainer to hand over control</bdi></h3>
+<p class="meta"><span class="phase">Resource Development</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Pressure accounts on the xz mailing list</bdi> → <bdi>Original xz Utils maintainer</bdi></p>
+<p>In 2022 accounts such as Jigar Kumar complained on the xz mailing list about slow progress and pushed for a new maintainer. The maintainer replied that he had limited time for the unpaid project. A public timeline says these addresses left almost no trace elsewhere online and were likely fake identities made to push for giving Jia Tan more control. Open source foundations later listed this pattern as a warning sign.</p>
+<p class="cites">Sources: <a href="#src-xz-devel-2022">[8]</a> <a href="#src-swtch-timeline">[9]</a> <a href="#src-openssf-alert">[12]</a></p>
+</li>
+<li class="step" id="step-gain-release-access" data-sources="src-tukaani src-swtch-timeline">
+<h3><span class="n">3</span> <bdi>Jia Tan gains commit and release rights</bdi></h3>
+<p class="meta"><span class="phase">Privilege Escalation</span></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>xz Utils repository and releases</bdi></p>
+<p>Over 2022 and 2023 Jia Tan became a co-maintainer with commit access and control of the project&#39;s GitHub-hosted assets. The original maintainer later confirmed that the 5.6.0 and 5.6.1 release archives were made and signed by Jia Tan, while the main website and its git copies stayed under his own control.</p>
+<p class="cites">Sources: <a href="#src-tukaani">[7]</a> <a href="#src-swtch-timeline">[9]</a></p>
+</li>
+<li class="step" id="step-disable-fuzz-ifunc" data-sources="src-swtch-timeline src-oss-security">
+<h3><span class="n">4</span> <bdi>A fuzzing build setting is turned off</bdi></h3>
+<p class="meta"><span class="phase">Defense Impairment</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>xz Utils repository and releases</bdi></p>
+<p>In July 2023 Jia Tan turned off support for a CPU feature-selection mechanism called ifunc in the project&#39;s OSS-Fuzz builds. A public timeline says the change may have been harmless on its own but also looks like groundwork, and the backdoor later abused that same mechanism. No primary source confirms the intent of this change.</p>
+<p class="cites">Sources: <a href="#src-swtch-timeline">[9]</a> <a href="#src-oss-security">[6]</a></p>
+</li>
+<li class="step" id="step-hide-payload-tests" data-sources="src-oss-security src-redhat-cve src-cve-record">
+<h3><span class="n">5</span> <bdi>Hidden payload committed as binary test files</bdi></h3>
+<p class="meta"><span class="phase">Stealth</span> <a class="technique" href="https://attack.mitre.org/techniques/T1027/" rel="noopener noreferrer">T1027</a></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>xz Utils repository and releases</bdi></p>
+<p>Before the 5.6.0 release, two binary files presented as compressed test data were added to the repository. No real test used them. Instead they held obfuscated parts of the backdoor, including a prebuilt object file, which looked like ordinary test data to anyone reading the source.</p>
+<p class="cites">Sources: <a href="#src-oss-security">[6]</a> <a href="#src-redhat-cve">[3]</a> <a href="#src-cve-record">[2]</a></p>
+</li>
+<li class="step" id="step-tamper-release-tarballs" data-sources="src-oss-security src-tukaani src-redhat-cve src-cisa-alert">
+<h3><span class="n">6</span> <bdi>Release archives ship a tampered build file</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1195/002/" rel="noopener noreferrer">T1195.002</a></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>xz Utils repository and releases</bdi></p>
+<p>The 5.6.0 and 5.6.1 release archives from early 2024 included a modified build macro file that was not in the git repository. During the build it quietly started an obfuscated script that pulled the hidden code out of the test files. Because the trigger existed only in the downloadable archives, reading the git source did not reveal it.</p>
+<p class="cites">Sources: <a href="#src-oss-security">[6]</a> <a href="#src-tukaani">[7]</a> <a href="#src-redhat-cve">[3]</a> <a href="#src-cisa-alert">[1]</a></p>
+</li>
+<li class="step" id="step-reach-distros" data-sources="src-debian-dsa src-redhat-blog src-redhat-cve">
+<h3><span class="n">7</span> <bdi>Backdoored versions reach Linux distributions</bdi></h3>
+<p class="meta"><span class="phase">Initial Access</span></p>
+<p class="actors"><bdi>xz Utils repository and releases</bdi> → <bdi>Linux distributions (testing and rolling builds)</bdi></p>
+<p>Debian testing, unstable and experimental packaged the affected versions, as did Fedora Rawhide, Fedora 41 development builds and the Fedora 40 beta. Red Hat said no Red Hat Enterprise Linux version was affected, and Debian said no stable release was known to be affected, so most production systems never received it.</p>
+<p class="cites">Sources: <a href="#src-debian-dsa">[5]</a> <a href="#src-redhat-blog">[4]</a> <a href="#src-redhat-cve">[3]</a></p>
+</li>
+<li class="step" id="step-build-injection" data-sources="src-oss-security src-cve-record src-redhat-cve">
+<h3><span class="n">8</span> <bdi>Package build injects code into liblzma</bdi></h3>
+<p class="meta"><span class="phase">Execution</span></p>
+<p class="actors"><bdi>xz Utils repository and releases</bdi> → <bdi>Linux distributions (testing and rolling builds)</bdi></p>
+<p>When the library was built as a Debian or RPM package for x86-64 Linux with GCC and the GNU linker, the hidden script extracted the prebuilt object and linked it into liblzma. The resulting library changed some of its own functions, so any program that loaded it could have its data intercepted or altered.</p>
+<p class="cites">Sources: <a href="#src-oss-security">[6]</a> <a href="#src-cve-record">[2]</a> <a href="#src-redhat-cve">[3]</a></p>
+</li>
+<li class="step" id="step-hide-from-analysis" data-sources="src-oss-security">
+<h3><span class="n">9</span> <bdi>Backdoor checks its surroundings to stay hidden</bdi></h3>
+<p class="meta"><span class="phase">Stealth</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>OpenSSH servers that load liblzma</bdi></p>
+<p>At run time the code only acted when things looked like a normal sshd start, for example by checking environment settings, and it appeared to notice some debuggers. The finder believed the package-build condition was meant to make the issue harder for investigators to reproduce. Version 5.6.1 also adjusted the code after it caused crashes and memory-checker errors.</p>
+<p class="cites">Sources: <a href="#src-oss-security">[6]</a></p>
+</li>
+<li class="step" id="step-hook-sshd" data-sources="src-oss-security src-redhat-cve">
+<h3><span class="n">10</span> <bdi>Backdoor hooks OpenSSH login checks</bdi></h3>
+<p class="meta"><span class="phase">Credential Access</span> <a class="technique" href="https://attack.mitre.org/techniques/T1556/" rel="noopener noreferrer">T1556</a></p>
+<p class="actors"><bdi>Linux distributions (testing and rolling builds)</bdi> → <bdi>OpenSSH servers that load liblzma</bdi></p>
+<p>Several distributions patch OpenSSH to notify systemd, which makes sshd load libsystemd and, through it, liblzma, even though OpenSSH does not use liblzma itself. As sshd started, the backdoor redirected an RSA check that sshd uses during public key login to its own code, so it could inspect login attempts before authentication finished.</p>
+<p class="cites">Sources: <a href="#src-oss-security">[6]</a> <a href="#src-redhat-cve">[3]</a></p>
+</li>
+<li class="step" id="step-remote-access" data-sources="src-cisa-alert src-redhat-blog src-oss-security src-sam-james-faq">
+<h3><span class="n">11</span> <bdi>Attacker could gain access to affected SSH servers</bdi></h3>
+<p class="meta"><span class="phase">Execution</span> <span class="badge reported">Reported</span></p>
+<p class="actors"><bdi>Jia Tan account</bdi> → <bdi>OpenSSH servers that load liblzma</bdi></p>
+<p>CISA and Red Hat said the hook could let a remote attacker get around SSH login checks and gain access to the whole system. Later analysis cited in a community FAQ said it acted only on input signed with the attacker&#39;s private key, checked against a public key built into the backdoor. The finder had not fully analyzed it at disclosure, and none of the cited sources reports a confirmed compromise that used it.</p>
+<p class="cites">Sources: <a href="#src-cisa-alert">[1]</a> <a href="#src-redhat-blog">[4]</a> <a href="#src-oss-security">[6]</a> <a href="#src-sam-james-faq">[10]</a></p>
+</li>
+</ol>
+</section>
+<section id="impact" aria-labelledby="impact-title">
+<h2 id="impact-title">Impact</h2>
+<p>The backdoor reached only development, testing and rolling Linux releases such as Debian testing and unstable, Fedora Rawhide and the Fedora 40 beta. No Debian stable or Red Hat Enterprise Linux version was affected. On systems that did run it, the CVE record rates the flaw critical (CVSS 10.0). CISA said it was spotted before it caused significant harm, but it showed how fragile and overloaded key open source projects can be.</p>
+<p class="cites">Sources: <a href="#src-debian-dsa">[5]</a> <a href="#src-redhat-blog">[4]</a> <a href="#src-cve-record">[2]</a> <a href="#src-cisa-lessons">[11]</a></p>
+</section>
+<section id="defenses" aria-labelledby="defenses-title">
+<h2 id="defenses-title">Defenses</h2>
+<ul class="checklist">
+<li id="def-downgrade-xz"><label><input type="checkbox"> <span>Replace xz 5.6.0 or 5.6.1 with a known clean version, such as 5.4.6 or the reverted package from your distribution, starting with testing and rolling systems.</span></label>
+<p class="cites">Addresses: <a href="#step-reach-distros">Step 7</a>, <a href="#step-hook-sshd">Step 10</a>, <a href="#step-remote-access">Step 11</a> · Sources: <a href="#src-cisa-alert">[1]</a> <a href="#src-debian-dsa">[5]</a> <a href="#src-redhat-blog">[4]</a></p></li>
+<li id="def-hunt-and-redeploy"><label><input type="checkbox"> <span>Look for signs of misuse on systems that ran the affected versions, report findings to CISA, and stop using affected development hosts until they are rebuilt on a clean version.</span></label>
+<p class="cites">Addresses: <a href="#step-hook-sshd">Step 10</a>, <a href="#step-remote-access">Step 11</a> · Sources: <a href="#src-cisa-alert">[1]</a> <a href="#src-redhat-blog">[4]</a></p></li>
+<li id="def-vet-maintainers"><label><input type="checkbox"> <span>Get to know new maintainers before giving them commit or release rights, review that access over time, and be wary of unknown accounts that push hard for a maintainer change.</span></label>
+<p class="cites">Addresses: <a href="#step-build-trust">Step 1</a>, <a href="#step-pressure-maintainer">Step 2</a>, <a href="#step-gain-release-access">Step 3</a> · Sources: <a href="#src-openssf-alert">[12]</a></p></li>
+<li id="def-review-all-changes"><label><input type="checkbox"> <span>Require a second reviewer for every merge, even from maintainers, ask for readable code, and keep opaque binary files out of the codebase where possible.</span></label>
+<p class="cites">Addresses: <a href="#step-disable-fuzz-ifunc">Step 4</a>, <a href="#step-hide-payload-tests">Step 5</a> · Sources: <a href="#src-openssf-alert">[12]</a> <a href="#src-cisa-lessons">[11]</a></p></li>
+<li id="def-guard-builds"><label><input type="checkbox"> <span>Treat unusual changes to build steps as a red flag, including files that appear only in release archives, and isolate build environments.</span></label>
+<p class="cites">Addresses: <a href="#step-tamper-release-tarballs">Step 6</a>, <a href="#step-build-injection">Step 8</a> · Sources: <a href="#src-openssf-alert">[12]</a> <a href="#src-cisa-lessons">[11]</a> <a href="#src-redhat-cve">[3]</a></p></li>
+<li id="def-support-maintainers"><label><input type="checkbox"> <span>Companies that depend on open source should give back money or developer time, so one overloaded maintainer is not the only line of defense.</span></label>
+<p class="cites">Addresses: <a href="#step-build-trust">Step 1</a>, <a href="#step-pressure-maintainer">Step 2</a> · Sources: <a href="#src-cisa-lessons">[11]</a></p></li>
+</ul>
+</section>
+<section id="sources" aria-labelledby="sources-title">
+<h2 id="sources-title">Sources</h2>
+<ol class="sources">
+<li id="src-cisa-alert"><a href="https://www.cisa.gov/news-events/alerts/2024/03/29/reported-supply-chain-compromise-affecting-xz-utils-data-compression-library-cve-2024-3094" rel="noopener noreferrer"><bdi>Reported Supply Chain Compromise Affecting XZ Utils Data Compression Library, CVE-2024-3094</bdi></a> <span class="source-meta"><bdi>CISA</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-cve-record"><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer"><bdi>CVE-2024-3094 record</bdi></a> <span class="source-meta"><bdi>CVE Program (CNA: Red Hat)</bdi> · cve · retrieved 2026-11-25</span></li>
+<li id="src-redhat-cve"><a href="https://access.redhat.com/security/cve/CVE-2024-3094" rel="noopener noreferrer"><bdi>CVE-2024-3094</bdi></a> <span class="source-meta"><bdi>Red Hat Customer Portal</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-redhat-blog"><a href="https://www.redhat.com/en/blog/urgent-security-alert-fedora-41-and-rawhide-users" rel="noopener noreferrer"><bdi>Urgent security alert for Fedora 41 and Rawhide users</bdi></a> <span class="source-meta"><bdi>Red Hat</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-debian-dsa"><a href="https://lists.debian.org/debian-security-announce/2024/msg00057.html" rel="noopener noreferrer"><bdi>[SECURITY] [DSA 5649-1] xz-utils security update</bdi></a> <span class="source-meta"><bdi>Debian</bdi> · advisory · retrieved 2026-11-25</span></li>
+<li id="src-oss-security"><a href="https://www.openwall.com/lists/oss-security/2024/03/29/4" rel="noopener noreferrer"><bdi>backdoor in upstream xz/liblzma leading to ssh server compromise</bdi></a> <span class="source-meta"><bdi>oss-security mailing list (Openwall)</bdi> · report · retrieved 2026-11-25</span></li>
+<li id="src-tukaani"><a href="https://tukaani.org/xz-backdoor/" rel="noopener noreferrer"><bdi>XZ Utils backdoor</bdi></a> <span class="source-meta"><bdi>Tukaani Project</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-xz-devel-2022"><a href="https://www.mail-archive.com/xz-devel@tukaani.org/msg00567.html" rel="noopener noreferrer"><bdi>Re: [xz-devel] XZ for Java</bdi></a> <span class="source-meta"><bdi>xz-devel mailing list (The Mail Archive)</bdi> · vendor · retrieved 2026-11-25</span></li>
+<li id="src-swtch-timeline"><a href="https://research.swtch.com/xz-timeline" rel="noopener noreferrer"><bdi>Timeline of the xz open source attack</bdi></a> <span class="source-meta"><bdi>research!rsc (Russ Cox)</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-sam-james-faq"><a href="https://gist.github.com/thesamesam/223949d5a074ebc3dce9ee78baad9e27" rel="noopener noreferrer"><bdi>FAQ on the xz-utils backdoor (CVE-2024-3094)</bdi></a> <span class="source-meta"><bdi>GitHub Gist (thesamesam)</bdi> · research · retrieved 2026-11-25</span></li>
+<li id="src-cisa-lessons"><a href="https://cisa.gov/news-events/news/lessons-xz-utils-achieving-more-sustainable-open-source-ecosystem" rel="noopener noreferrer"><bdi>Lessons from XZ Utils: Achieving a More Sustainable Open Source Ecosystem</bdi></a> <span class="source-meta"><bdi>CISA</bdi> · report · retrieved 2026-11-25</span></li>
+<li id="src-openssf-alert"><a href="https://openjsf.org/blog/openssf-openjs-alert-social-engineering-takeovers" rel="noopener noreferrer"><bdi>OpenSSF and OpenJS Alert for Social Engineering Takeovers of Open Source Projects</bdi></a> <span class="source-meta"><bdi>OpenJS Foundation and OpenSSF</bdi> · advisory · retrieved 2026-11-25</span></li>
+</ol>
+</section>
+</main>
+<footer>
+<p>Schema version 1 · Created by the Breachmap skill 0.1.0 on 2026-11-25 · Not reviewed yet · Made with Breachmap 0.1.0</p>
+</footer>
+<script>(function () {
+  var doc = document;
+  doc.documentElement.classList.add("js");
+  function all(selector) {
+    return Array.prototype.slice.call(doc.querySelectorAll(selector));
+  }
+  var steps = all("li.step");
+  var arrows = all("a.arrow");
+  var sources = all("ol.sources > li");
+  var status = doc.getElementById("nav-status");
+  var prev = doc.getElementById("nav-prev");
+  var next = doc.getElementById("nav-next");
+  var current = 0;
+  function indexOf(id) {
+    return steps.findIndex(function (s) { return s.id === id; });
+  }
+  function mark(el, on) {
+    if (on) el.setAttribute("aria-current", "step");
+    else el.removeAttribute("aria-current");
+  }
+  function select(i, scroll, focus) {
+    current = Math.max(0, Math.min(steps.length - 1, i));
+    var step = steps[current];
+    var cited = (step.getAttribute("data-sources") || "").split(" ");
+    steps.forEach(function (s) { mark(s, s === step); });
+    arrows.forEach(function (a) { mark(a, a.getAttribute("data-step") === step.id); });
+    sources.forEach(function (li) { li.classList.toggle("hl", cited.indexOf(li.id) !== -1); });
+    status.textContent = "Step " + (current + 1) + " of " + steps.length;
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length - 1;
+    if (focus) step.focus({ preventScroll: true });
+    if (scroll) step.scrollIntoView({ block: "nearest" });
+  }
+  steps.forEach(function (s, i) {
+    s.setAttribute("tabindex", "-1");
+    s.addEventListener("click", function () { select(i, false, false); });
+  });
+  prev.addEventListener("click", function () { select(current - 1, true, false); });
+  next.addEventListener("click", function () { select(current + 1, true, false); });
+  doc.addEventListener("click", function (e) {
+    var link = e.target.closest && e.target.closest("a[href^='#step-']");
+    var i = link ? indexOf(link.getAttribute("href").slice(1)) : -1;
+    if (i !== -1) select(i, false, false);
+  });
+  doc.addEventListener("keydown", function (e) {
+    var t = e.target;
+    var skip = t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest(".diagram")));
+    var delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!delta || skip || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    select(current + delta, true, true);
+  });
+  var start = indexOf(window.location.hash.slice(1));
+  select(start === -1 ? 0 : start, false, false);
+})();</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "id": "log4shell-2021",
+  "title": "Log4Shell: remote code execution in Apache Log4j 2 (CVE-2021-44228)",
+  "summary": "Log4Shell is a critical flaw in Apache Log4j 2, a Java logging library built into thousands of products. Versions 2.0-beta9 to 2.14.1 resolved JNDI lookups found inside logged text, so an unauthenticated attacker who got crafted text logged could make the server fetch and run code from a server the attacker controlled. After details went public in December 2021, mass scanning followed, then coin miners, botnets, ransomware and suspected state-backed intrusions.",
+  "dates": {
+    "started": "2021-12-01",
+    "discovered": "2021-11-24",
+    "disclosed": "2021-12-10"
+  },
+  "identifiers": {
+    "cve": ["CVE-2021-44228"]
+  },
+  "entities": [
+    {
+      "id": "attackers",
+      "name": "Attackers (criminal and suspected state-backed)",
+      "kind": "attacker"
+    },
+    {
+      "id": "attacker-ldap",
+      "name": "Attacker-controlled LDAP/JNDI server",
+      "kind": "attacker"
+    },
+    {
+      "id": "java-app",
+      "name": "Internet-facing Java application or appliance",
+      "kind": "victim"
+    },
+    {
+      "id": "log4j-core",
+      "name": "Apache Log4j 2 (log4j-core)",
+      "kind": "system"
+    },
+    {
+      "id": "internal-network",
+      "name": "Victim's internal network",
+      "kind": "victim"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mass-scanning",
+      "title": "Scan the internet for vulnerable services",
+      "description": "Soon after the flaw became public, attackers and researchers swept the internet for systems running vulnerable Log4j. The FBI saw widespread scanning aimed at gaining network access. The CSRB notes vendors logged millions of probes, some automated through botnets, which made malicious traffic hard to tell apart from research scans.",
+      "phase": "reconnaissance",
+      "techniqueId": "T1595.002",
+      "from": "attackers",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa21-356a", "csrb-report"]
+    },
+    {
+      "id": "inject-lookup",
+      "title": "Get crafted lookup text written to the log",
+      "description": "The attacker places a specially formed lookup expression into any input the target is likely to log, such as a web request header, a form field or a chat message. No account and no user action are needed. Attackers soon disguised this text with encoding tricks to slip past simple filters.",
+      "phase": "initial-access",
+      "techniqueId": "T1190",
+      "from": "attackers",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["apache-security", "cve-record", "microsoft-guidance", "cloudflare-preexploit"]
+    },
+    {
+      "id": "jndi-callback",
+      "title": "Log4j resolves the lookup and calls the attacker's server",
+      "description": "When the app passes that text to Log4j, vulnerable versions treat the expression as a JNDI lookup and resolve it. The server then opens an outbound connection, for example over LDAP, to an address the attacker picked. This lookup feature was added in 2013. The callback alone also tells the attacker which hosts are vulnerable, and many campaigns used it to fingerprint targets first.",
+      "phase": "execution",
+      "from": "log4j-core",
+      "to": "attacker-ldap",
+      "confidence": "confirmed",
+      "sourceIds": ["apache-security", "cve-record", "csrb-report", "microsoft-guidance"]
+    },
+    {
+      "id": "remote-code-load",
+      "title": "The attacker's server returns code that the app runs",
+      "description": "The attacker's server answers the lookup with code of its choosing. The vulnerable process loads and runs it with the application's own rights, which gives the attacker full control of that system. Apache rated this 10.0, the highest score, because it is easy to pull off and needs no privileges or user interaction.",
+      "phase": "execution",
+      "from": "attacker-ldap",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["apache-security", "cve-record", "cisa-aa21-356a", "csrb-report"]
+    },
+    {
+      "id": "leak-secrets",
+      "title": "Leak secrets through the lookup itself",
+      "description": "Some attackers did not need to run code at all. They used Log4j's other lookup features to fold data such as environment variables, system details or credentials into the outbound request, so the secrets reached the attacker's server as part of the callback. Microsoft also saw data leakage through the flaw without any payload being dropped.",
+      "phase": "exfiltration",
+      "from": "log4j-core",
+      "to": "attacker-ldap",
+      "confidence": "reported",
+      "sourceIds": ["cloudflare-preexploit", "microsoft-guidance"]
+    },
+    {
+      "id": "coin-miners-botnets",
+      "title": "Install coin miners and botnet malware",
+      "description": "Much of the early follow-on activity aimed at quick profit. The FBI saw attackers deploy cryptocurrency miners and botnet malware on vulnerable systems. Microsoft reported the flaw being quickly added to existing botnets such as Mirai, and the CSRB cites Cisco Talos seeing the same.",
+      "phase": "impact",
+      "techniqueId": "T1496",
+      "from": "attackers",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa21-356a", "microsoft-guidance", "csrb-report"]
+    },
+    {
+      "id": "remote-access-tools",
+      "title": "Plant web shells and remote access tools",
+      "description": "In more targeted intrusions, attackers used the foothold to install tools for lasting control. CISA and the U.S. Coast Guard Cyber Command found loader malware with remote control features and a web shell on hacked VMware Horizon servers. Microsoft also saw Cobalt Strike, reverse shells and other remote access tools.",
+      "phase": "command-and-control",
+      "from": "attackers",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa22-174a", "microsoft-guidance"]
+    },
+    {
+      "id": "lateral-movement",
+      "title": "Move deeper into the network over RDP",
+      "description": "In one case CISA described, the attackers used administrator credentials, obtained in a way investigators could not determine, and Remote Desktop Protocol to reach other hosts, including a security management server, a certificate server and a database with sensitive law enforcement data. Microsoft separately saw Cobalt Strike used for credential theft and lateral movement.",
+      "phase": "lateral-movement",
+      "techniqueId": "T1021.001",
+      "from": "java-app",
+      "to": "internal-network",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-aa22-174a", "microsoft-guidance"]
+    },
+    {
+      "id": "exfiltrate-data",
+      "title": "Collect and send out sensitive data",
+      "description": "In the same VMware Horizon case, the attackers gathered data from the production environment, and CISA says they likely exfiltrated it. A security management server sent more than 130 GB of data during that period, and archives of law enforcement investigation data were found.",
+      "phase": "exfiltration",
+      "from": "internal-network",
+      "to": "attackers",
+      "confidence": "reported",
+      "sourceIds": ["cisa-aa22-174a"]
+    },
+    {
+      "id": "ransomware",
+      "title": "Sell access or deploy ransomware",
+      "description": "Microsoft reported access brokers using the flaw to break into networks and then selling that access to ransomware affiliates, and ransomware such as Khonsari and NightSky delivered through it. The CSRB notes a security firm investigated several ransomware incidents that used Log4j between January and March 2022.",
+      "phase": "impact",
+      "techniqueId": "T1486",
+      "from": "attackers",
+      "to": "internal-network",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance", "csrb-report"]
+    },
+    {
+      "id": "state-actors",
+      "title": "State-linked groups exploit unpatched servers",
+      "description": "Microsoft said several nation-state groups it tracks, from China, Iran, North Korea and Turkey, used the flaw, naming PHOSPHORUS (Iran) and HAFNIUM (China). CISA and the Coast Guard said actors including state-sponsored APT groups kept exploiting unpatched VMware Horizon servers into 2022.",
+      "phase": "initial-access",
+      "techniqueId": "T1190",
+      "from": "attackers",
+      "to": "java-app",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance", "cisa-aa22-174a"]
+    }
+  ],
+  "impact": {
+    "description": "Log4j is built into thousands of software packages, so the flaw touched almost every networked organization, and many could not tell where they used it. Apache rated it 10.0, the maximum severity. Response was costly: one U.S. federal cabinet department spent 33,000 hours on it. Yet the CSRB found exploitation lower than experts feared and knew of no significant Log4j attack on critical infrastructure at the time. It calls Log4j an endemic vulnerability that may stay in systems for a decade or longer.",
+    "sourceIds": ["csrb-report", "apache-security"]
+  },
+  "defenses": [
+    {
+      "id": "upgrade-log4j",
+      "action": "Upgrade log4j-core itself to a fixed release (CISA lists 2.17.1 for Java 8, 2.12.4 for Java 7, 2.3.2 for Java 6) and install vendor updates for products that bundle it. Updating Java alone does not fix the flaw.",
+      "stepIds": ["inject-lookup", "jndi-callback", "remote-code-load", "leak-secrets"],
+      "sourceIds": ["cisa-guidance", "cisa-aa21-356a", "apache-security"]
+    },
+    {
+      "id": "inventory-assets",
+      "action": "Keep an up-to-date asset and software inventory, including software bills of materials, so every copy of Log4j can be found fast, also inside JAR files, containers, in-house code and systems that are not internet-facing.",
+      "stepIds": ["mass-scanning", "inject-lookup"],
+      "sourceIds": ["csrb-report", "cisa-guidance", "microsoft-guidance"]
+    },
+    {
+      "id": "disable-lookups",
+      "action": "If you cannot patch yet, remove the JNDI lookup class from the library as a short-term workaround, then patch as soon as possible.",
+      "stepIds": ["jndi-callback", "remote-code-load", "leak-secrets"],
+      "sourceIds": ["cisa-aa21-356a", "microsoft-guidance"]
+    },
+    {
+      "id": "egress-filtering",
+      "action": "Block or allowlist outbound LDAP and RMI traffic from servers and send their DNS only to approved resolvers, so a vulnerable host cannot reach the attacker's server.",
+      "stepIds": ["jndi-callback", "remote-code-load", "leak-secrets"],
+      "sourceIds": ["cisa-aa21-356a"]
+    },
+    {
+      "id": "waf-and-segmentation",
+      "action": "Put internet-facing services in a segregated DMZ behind updated web application firewall rules, and take systems that cannot be patched or mitigated off the network.",
+      "stepIds": ["mass-scanning", "inject-lookup", "state-actors", "lateral-movement"],
+      "sourceIds": ["cisa-aa21-356a", "cisa-aa22-174a", "cisa-guidance"]
+    },
+    {
+      "id": "assume-compromise",
+      "action": "Treat exposed systems that were not patched quickly as compromised: hunt for miners, web shells and remote access tools, review configuration and account changes since 1 December 2021, and follow incident response before patching.",
+      "stepIds": ["coin-miners-botnets", "remote-access-tools", "exfiltrate-data", "ransomware"],
+      "sourceIds": ["cisa-aa21-356a", "cisa-aa22-174a"]
+    },
+    {
+      "id": "limit-access",
+      "action": "Use multifactor authentication, strong passwords and least privilege so a single compromised server does not open the rest of the network.",
+      "stepIds": ["lateral-movement"],
+      "sourceIds": ["cisa-aa22-174a"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "apache-security",
+      "url": "https://logging.apache.org/log4j/2.x/security.html",
+      "title": "Security :: Apache Logging Services",
+      "publisher": "Apache Software Foundation",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cve-record",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2021-44228",
+      "title": "CVE-2021-44228: Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints",
+      "publisher": "CVE Program (CNA: Apache Software Foundation)",
+      "type": "cve",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-guidance",
+      "url": "https://www.cisa.gov/news-events/news/apache-log4j-vulnerability-guidance",
+      "title": "Apache Log4j Vulnerability Guidance",
+      "publisher": "Cybersecurity and Infrastructure Security Agency (CISA)",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-aa21-356a",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a",
+      "title": "Mitigating Log4Shell and Other Log4j-Related Vulnerabilities (AA21-356A)",
+      "publisher": "CISA, FBI, NSA and international partners",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-aa22-174a",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-174a",
+      "title": "Malicious Cyber Actors Continue to Exploit Log4Shell in VMware Horizon Systems (AA22-174A)",
+      "publisher": "CISA and U.S. Coast Guard Cyber Command",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "csrb-report",
+      "url": "https://www.cisa.gov/sites/default/files/publications/CSRB-Report-on-Log4-July-11-2022_508.pdf",
+      "title": "Review of the December 2021 Log4j Event",
+      "publisher": "Cyber Safety Review Board",
+      "type": "report",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "microsoft-guidance",
+      "url": "https://www.microsoft.com/en-us/security/blog/2021/12/11/guidance-for-preventing-detecting-and-hunting-for-cve-2021-44228-log4j-2-exploitation/",
+      "title": "Guidance for preventing, detecting, and hunting for exploitation of the Log4j 2 vulnerability",
+      "publisher": "Microsoft Threat Intelligence",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cloudflare-preexploit",
+      "url": "https://blog.cloudflare.com/exploitation-of-cve-2021-44228-before-public-disclosure-and-evolution-of-waf-evasion-patterns/",
+      "title": "Exploitation of Log4j CVE-2021-44228 before public disclosure and evolution of evasion and exfiltration",
+      "publisher": "Cloudflare",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    }
+  ],
+  "provenance": {
+    "createdBy": "skill",
+    "skillVersion": "0.1.0",
+    "createdAt": "2026-11-25"
+  }
+}
