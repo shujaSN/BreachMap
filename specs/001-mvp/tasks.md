@@ -69,9 +69,9 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 ## Phase 6: CI and release
 
-- [ ] **T32** 🛑 CI workflow with gallery check, Dependabot, "Incorrect fact" issue template.
+- [x] **T32** 🛑 CI workflow with gallery check, Dependabot, "Incorrect fact" issue template.
   (NFR-8, NFR-9, AC9, spec section 9)
-- [ ] **T33** 🛑 Release workflow: npm trusted publishing with provenance. (NFR-9)
-- [ ] **T34** README: GIF, 3-step quickstart, limitations. (AC10)
+- [x] **T33** 🛑 Release workflow: npm trusted publishing with provenance. (NFR-9)
+- [x] **T34** README: GIF, 3-step quickstart, limitations. (AC10)
 - [ ] **T35** 🛑 👤 Check the npm name, tag v0.1.0, push, publish; then add a pinned
   `npx -y breachmap@0.1.0` path to the skill. (AC10, ADR 0001)
