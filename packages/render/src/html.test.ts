@@ -518,6 +518,16 @@ describe("html strict template grammar", () => {
     ["xlink:href", () => html`<use xlink:href="${"#n1"}"/>`, /xlink:href attribute/],
     ["an iframe", () => html`<iframe></iframe>${"x"}`, /not allowed/],
     [
+      "an unquoted refresh",
+      () => html`<meta http-equiv=refresh content="0;url=https://x">`,
+      /refresh/,
+    ],
+    [
+      "a single-quoted refresh",
+      () => html`<meta http-equiv='refresh' content="0;url=https://x">`,
+      /refresh/,
+    ],
+    [
       "refresh after content",
       () => html`<meta content="${"0;url=https://x"}" http-equiv="refresh">`,
       /refresh/,

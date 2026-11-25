@@ -1,5 +1,6 @@
 import { layout } from "@breachmap/core";
 import type { Incident } from "@breachmap/schema";
+import { isolate } from "./bidi.ts";
 import { type Html, html } from "./html.ts";
 
 const SUFFIX = { confirmed: "", reported: " (reported)", disputed: " (disputed)" } as const;
@@ -28,7 +29,7 @@ export function diagram(incident: Incident): Html {
       ? html`<circle cx="${r.x1}" cy="${r.y}" r="6"></circle>`
       : html`<line x1="${r.x1}" y1="${r.y}" x2="${r.x2}" y2="${r.y}" marker-end="url(#arrowhead)"></line>`;
     return html`
-<a class="arrow ${step.confidence}" href="#step-${step.id}" data-step="step-${step.id}" tabindex="-1"><title>Step ${r.n}: ${step.title}${SUFFIX[step.confidence]}</title>${mark}<text class="step-n" x="${self ? r.x1 + 14 : (r.x1 + r.x2) / 2}" y="${r.y - 8}">${r.n}</text></a>`;
+<a class="arrow ${step.confidence}" href="#step-${step.id}" data-step="step-${step.id}" tabindex="-1"><title>Step ${r.n}: ${isolate(step.title)}${SUFFIX[step.confidence]}</title>${mark}<text class="step-n" x="${self ? r.x1 + 14 : (r.x1 + r.x2) / 2}" y="${r.y - 8}">${r.n}</text></a>`;
   });
   return html`<figure class="diagram">
 <svg viewBox="0 0 ${g.width} ${g.height}" width="${g.width}" height="${g.height}" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: ${count(g.rows.length, "step", "steps")} between ${count(g.lanes.length, "entity", "entities")}</title>

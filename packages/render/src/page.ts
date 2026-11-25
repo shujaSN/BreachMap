@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { type Incident, TACTICS } from "@breachmap/schema";
 import { CSS, SCRIPT } from "./assets.ts";
+import { isolate } from "./bidi.ts";
 import { diagram } from "./diagram.ts";
 import { type Html, html } from "./html.ts";
 
@@ -65,7 +66,7 @@ export function page(incident: Incident, version: string): Html {
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="x-dns-prefetch-control" content="off">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${incident.title} · Breachmap</title>
+<title>${isolate(incident.title)} · Breachmap</title>
 <style>${CSS}</style>
 </head>
 <body>

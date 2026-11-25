@@ -130,7 +130,7 @@ function siteOf(strings: TemplateStringsArray): Site {
   return {
     places: strings.slice(1).map((_, i) => placeOf(strings.slice(0, i + 1).join(""))),
     balanced: !all.startsWith(DOCTYPE) && placeOf(all).kind === "text" && foreignClosed(all),
-    refresh: all.includes('http-equiv="refresh"'),
+    refresh: /http-equiv[\t\n\f\r ]*=[\t\n\f\r ]*["']?[\t\n\f\r ]*refresh/.test(all),
   };
 }
 

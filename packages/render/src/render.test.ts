@@ -134,7 +134,7 @@ describe("render: document", () => {
   });
 
   it("FR-8: title is the incident title and Breachmap", () => {
-    expect(dom().title).toBe("Example Corp build server compromise · Breachmap");
+    expect(dom().title).toBe("⁨Example Corp build server compromise⁩ · Breachmap");
   });
 
   it("NFR-1: has one style, in the head", () => {

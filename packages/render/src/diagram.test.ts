@@ -83,9 +83,9 @@ const CASES: [string, Incident][] = [
 ];
 
 const TITLES: [Step["confidence"], string][] = [
-  ["confirmed", "Step 1: Phishing email to an engineer"],
-  ["reported", "Step 1: Phishing email to an engineer (reported)"],
-  ["disputed", "Step 1: Phishing email to an engineer (disputed)"],
+  ["confirmed", "Step 1: ⁨Phishing email to an engineer⁩"],
+  ["reported", "Step 1: ⁨Phishing email to an engineer⁩ (reported)"],
+  ["disputed", "Step 1: ⁨Phishing email to an engineer⁩ (disputed)"],
 ];
 
 const nameOf = (n: number) => "abcdefghijklmnopqrstuvwxyz0123456789".repeat(3).slice(0, n);
@@ -235,9 +235,9 @@ describe("diagram: arrows", () => {
 
   it("FR-8, FR-10: arrow titles are Step n, the step title and the confidence", () => {
     expect(arrows().map((a) => text(a.querySelector("title")))).toEqual([
-      "Step 1: Phishing email to an engineer",
-      "Step 2: Login to the build server (reported)",
-      "Step 3: Backdoor added to the build script",
+      "Step 1: ⁨Phishing email to an engineer⁩",
+      "Step 2: ⁨Login to the build server⁩ (reported)",
+      "Step 3: ⁨Backdoor added to the build script⁩",
     ]);
   });
 
@@ -340,9 +340,9 @@ describe("diagram: xss.json", () => {
     expect([texts(svg, "g.lane > title"), texts(svg, "a.arrow > title")]).toEqual([
       ["</title><script>alert(1)</script>", "Example Corp", "Example Corp build server"],
       [
-        'Step 1: "><svg onload=alert(1)>',
-        "Step 2: Login to the build server (reported)",
-        "Step 3: Backdoor added to the build script",
+        'Step 1: ⁨"><svg onload=alert(1)>⁩',
+        "Step 2: ⁨Login to the build server⁩ (reported)",
+        "Step 3: ⁨Backdoor added to the build script⁩",
       ],
     ]);
   });

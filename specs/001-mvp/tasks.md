@@ -40,7 +40,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
   happy-dom tests. (FR-9, NFR-6)
 - [x] **T15** Safety and budget tests: XSS, same bytes, CSP hashes, no external references,
   at most 250 KB, under 1 s. (AC3, AC4, NFR-1, NFR-2, NFR-4, NFR-7)
-- [ ] **T16** `packages/render/AGENTS.md` and a security-auditor pass on render. (NFR-1)
+- [x] **T16** `packages/render/AGENTS.md` and a security-auditor pass on render. (NFR-1)
 
 ## Phase 4: CLI
 
