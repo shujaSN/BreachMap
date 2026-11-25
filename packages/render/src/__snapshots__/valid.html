@@ -24,6 +24,17 @@
 <main>
 <section id="flow" aria-labelledby="flow-title">
 <h2 id="flow-title">Attack flow</h2>
+<figure class="diagram">
+<svg viewBox="0 0 528 256" width="528" height="256" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: 3 steps between 3 entities</title>
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>
+<g class="lane"><title>Example Threat Group</title><text class="lane-label" x="104" y="36">Example Threat Group</text><line class="lifeline" x1="104" y1="64" x2="104" y2="232"></line></g>
+<g class="lane"><title>Example Corp</title><text class="lane-label" x="264" y="36">Example Corp</text><line class="lifeline" x1="264" y1="64" x2="264" y2="232"></line></g>
+<g class="lane"><title>Example Corp build server</title><text class="lane-label" x="424" y="36">Example Corp build …</text><line class="lifeline" x1="424" y1="64" x2="424" y2="232"></line></g>
+<a class="arrow confirmed" href="#step-phishing-email" data-step="step-phishing-email" tabindex="-1"><title>Step 1: Phishing email to an engineer</title><line x1="104" y1="92" x2="264" y2="92" marker-end="url(#arrowhead)"></line><text class="step-n" x="184" y="84">1</text></a>
+<a class="arrow reported" href="#step-build-server-login" data-step="step-build-server-login" tabindex="-1"><title>Step 2: Login to the build server (reported)</title><line x1="104" y1="148" x2="424" y2="148" marker-end="url(#arrowhead)"></line><text class="step-n" x="264" y="140">2</text></a>
+<a class="arrow confirmed" href="#step-tampered-release" data-step="step-tampered-release" tabindex="-1"><title>Step 3: Backdoor added to the build script</title><circle cx="424" cy="204" r="6"></circle><text class="step-n" x="438" y="196">3</text></a>
+</svg>
+</figure>
 <ol class="steps">
 <li class="step" id="step-phishing-email" data-sources="src-example-advisory">
 <h3><span class="n">1</span> <bdi>Phishing email to an engineer</bdi></h3>

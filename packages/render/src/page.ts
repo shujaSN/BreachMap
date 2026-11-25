@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { type Incident, TACTICS } from "@breachmap/schema";
 import { CSS, SCRIPT } from "./assets.ts";
+import { diagram } from "./diagram.ts";
 import { type Html, html } from "./html.ts";
 
 type Step = Incident["steps"][number];
@@ -82,6 +83,7 @@ ${incident.identifiers && fact("CVE", incident.identifiers.cve.join(", "))}
 <main>
 <section id="flow" aria-labelledby="flow-title">
 <h2 id="flow-title">Attack flow</h2>
+${diagram(incident)}
 <ol class="steps">${incident.steps.map(step)}
 </ol>
 </section>

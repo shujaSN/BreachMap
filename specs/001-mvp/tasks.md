@@ -34,7 +34,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [x] **T10** `html` tagged template that escapes by default. (NFR-1, FR-3)
 - [x] **T11** Static page: head with CSP, header, steps, impact, defenses, sources, footer;
   file snapshot. (FR-7, FR-8, FR-10, FR-11, FR-12, NFR-2)
-- [ ] **T12** SVG sequence diagram from `layout()`. (FR-8, FR-10, ADR 0003)
+- [x] **T12** SVG sequence diagram from `layout()`. (FR-8, FR-10, ADR 0003)
 - [ ] **T13** CSS: themes, AA contrast, focus, reduced motion, small screens. (NFR-5, NFR-6)
 - [ ] **T14** Map script: step buttons, ←/→ keys, source highlight, defense links;
   happy-dom tests. (FR-9, NFR-6)
