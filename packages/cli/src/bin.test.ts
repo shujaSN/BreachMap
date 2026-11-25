@@ -30,9 +30,21 @@ describe("bin.ts from source", () => {
   });
 
   it("FR-14: render writes the map to the -o path", () => {
-    const out = join(dir, "valid.html");
-    expect(runFile(bin, ["render", fixture("valid.json"), "-o", out]).status).toBe(0);
-    expect(readFileSync(out, "utf8")).toMatch(/^<!doctype html>/);
+    expect(runFile(bin, ["render", fixture("valid.json"), "-o", "valid.html"]).status).toBe(0);
+    expect(readFileSync(join(dir, "valid.html"), "utf8")).toMatch(/^<!doctype html>/);
+  });
+
+  it("FR-14: render creates a missing output folder", () => {
+    expect(
+      runFile(bin, ["render", fixture("valid.json"), "-o", "gallery/maps/valid.html"]).status,
+    ).toBe(0);
+    expect(readFileSync(join(dir, "gallery", "maps", "valid.html"), "utf8")).toMatch(
+      /^<!doctype html>/,
+    );
+  });
+
+  it("NFR-1: render refuses to write outside the current folder", () => {
+    expect(runFile(bin, ["render", fixture("valid.json"), "-o", "../escape.html"]).status).toBe(2);
   });
 
   it("FR-15: new creates the file once and never overwrites it", () => {

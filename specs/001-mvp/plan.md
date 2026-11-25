@@ -150,6 +150,8 @@ It calls `validate()` first and refuses invalid input (FR-7).
 - `validate <file...>`: exit 0 if all valid, 1 if any is invalid or unreadable. Bad JSON is
   reported at `(root)` as "is not valid JSON" (parser messages differ between Node versions).
 - `render <file> [-o <out>]`: default output is the input path with `.html`. Exit 1 on invalid input.
+  The output must be an `.html` file inside the current folder (exit 2 otherwise); its folder is
+  created if missing.
 - `new <id>`: writes `./<id>.json`. A bad id exits 2. An existing file is never
   overwritten (exit 1). The starter passes validation (TODO text, `https://example.com` sources),
   so `render` works right away.

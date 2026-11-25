@@ -37,6 +37,9 @@ randomness or Node built-ins in schema/core/render (render may use `node:crypto`
   `validate(input)` is the one entry point: schema first, then reference rules (FR-4).
 - `packages/render`: JSON → HTML. Deterministic. See `packages/render/AGENTS.md`.
 - `packages/cli`: the only package allowed to do I/O.
+- `skill/breachmap/SKILL.md`: the agent skill (Agent Skills format), linked from
+  `.claude/skills/breachmap` so Claude Code loads it in this repo. On change, bump `metadata.version`
+  and the `skillVersion` in its schema section together. Keep `allowed-tools` to the minimum.
 - Decisions: `docs/adr/`. Feature specs: `specs/NNN-name/`.
 
 ## Workflow

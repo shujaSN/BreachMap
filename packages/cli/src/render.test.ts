@@ -108,3 +108,24 @@ describe("render write errors", () => {
     ]);
   });
 });
+
+describe("render output path", () => {
+  const valid = readFileSync(new URL("../../../fixtures/valid.json", import.meta.url), "utf8");
+  it.each(["../x.html", "/etc/x.html", "a/../../x.html", "x.txt", "x.html.sh"])(
+    "NFR-1: refuses -o %s and writes nothing",
+    async (target) => {
+      const { io, fs, err } = fake({ "x.json": valid });
+      expect(await run(["render", "x.json", "-o", target], io)).toBe(2);
+      expect([...fs.keys()]).toEqual(["x.json"]);
+      expect(err[1]).toBe("  fix: Write to an .html file inside the current folder.");
+    },
+  );
+
+  it.each(["maps/x.html", "/work/maps/x.html", "a/../x.html"])(
+    "FR-14: allows -o %s",
+    async (target) => {
+      const { io } = fake({ "x.json": valid });
+      expect(await run(["render", "x.json", "-o", target], io)).toBe(0);
+    },
+  );
+});

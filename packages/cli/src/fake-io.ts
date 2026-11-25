@@ -25,6 +25,7 @@ export function fake(files: Record<string, string> = {}) {
       err.push(line);
     },
     today: () => TODAY,
+    cwd: () => "/work",
   };
   return { io, fs, out, err };
 }

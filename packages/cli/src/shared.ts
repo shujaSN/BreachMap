@@ -8,6 +8,7 @@ export type Io = {
   out(line: string): void;
   err(line: string): void;
   today(): string;
+  cwd(): string;
 };
 
 export const VERSION = pkg.version;

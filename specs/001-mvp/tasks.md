@@ -52,7 +52,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 ## Phase 5: Skill, gallery, evals
 
-- [ ] **T22** Skill `skill/breachmap/SKILL.md`, linked in `.claude/skills/`;
+- [x] **T22** Skill `skill/breachmap/SKILL.md`, linked in `.claude/skills/`;
   security-auditor pass. (FR-17, FR-18, FR-19, FR-20)
 - [ ] **T23** 👤 Gallery: xz Utils backdoor. (FR-21, FR-22)
 - [ ] **T24** 👤 Gallery: Log4Shell. (FR-21, FR-22)
@@ -71,4 +71,5 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
   (NFR-8, NFR-9, AC9, spec section 9)
 - [ ] **T33** 🛑 Release workflow: npm trusted publishing with provenance. (NFR-9)
 - [ ] **T34** README: GIF, 3-step quickstart, limitations. (AC10)
-- [ ] **T35** 🛑 👤 Check the npm name, tag v0.1.0, push, publish. (AC10, ADR 0001)
+- [ ] **T35** 🛑 👤 Check the npm name, tag v0.1.0, push, publish; then add a pinned
+  `npx -y breachmap@0.1.0` path to the skill. (AC10, ADR 0001)
