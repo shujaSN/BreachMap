@@ -38,7 +38,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [x] **T13** CSS: themes, AA contrast, focus, reduced motion, small screens. (NFR-5, NFR-6)
 - [x] **T14** Map script: step buttons, ←/→ keys, source highlight, defense links;
   happy-dom tests. (FR-9, NFR-6)
-- [ ] **T15** Safety and budget tests: XSS, same bytes, CSP hashes, no external references,
+- [x] **T15** Safety and budget tests: XSS, same bytes, CSP hashes, no external references,
   at most 250 KB, under 1 s. (AC3, AC4, NFR-1, NFR-2, NFR-4, NFR-7)
 - [ ] **T16** `packages/render/AGENTS.md` and a security-auditor pass on render. (NFR-1)
 
