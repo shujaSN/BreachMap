@@ -2,7 +2,19 @@
   "name": "breachmap",
   "version": "0.1.0",
   "description": "Turn a security incident into a sourced, interactive attack map: one offline HTML file.",
+  "keywords": [
+    "security",
+    "incident",
+    "attack-map",
+    "mitre-attack",
+    "cli"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shujaSN/BreachMap.git",
+    "directory": "packages/cli"
+  },
   "type": "module",
   "bin": {
     "breachmap": "dist/cli.js"
