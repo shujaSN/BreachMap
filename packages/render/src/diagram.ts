@@ -32,7 +32,7 @@ export function diagram(incident: Incident): Html {
   });
   return html`<figure class="diagram">
 <svg viewBox="0 0 ${g.width} ${g.height}" width="${g.width}" height="${g.height}" role="img" aria-labelledby="diagram-title"><title id="diagram-title">Attack flow: ${count(g.rows.length, "step", "steps")} between ${count(g.lanes.length, "entity", "entities")}</title>
-<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>${lanes}${arrows}
+<defs><marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"></path></marker></defs>${lanes}${arrows}
 </svg>
 </figure>`;
 }
