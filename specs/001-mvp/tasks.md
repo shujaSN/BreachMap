@@ -64,6 +64,8 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [ ] **T30** 👤 Run evals and meet all E1 to E4 targets. (AC7, AC8) Run 2026-11-25 passes provisionally (E1 100%, E2 0, E3 100%, E4 80.6%); waiting for Shuja to verify the golden files and spot-check 20% of E3.
 - [ ] **T31** 👤 Browser checks in Chrome, Firefox and Safari: offline, zero requests,
   JS off, keyboard only. (AC2, AC5, AC6, NFR-5)
+  Chrome done on 2026-11-25: one network request (the page), arrow keys, Tab/Enter on the step
+  buttons with visible focus, no CSP errors. JS-off is covered by tests. Firefox and Safari: Shuja.
 
 ## Phase 6: CI and release
 

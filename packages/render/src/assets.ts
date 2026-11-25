@@ -4,7 +4,7 @@ export const CSS = html`:root{color-scheme:light dark;--bg:#ffffff;--card:#f4f5f
 @media (prefers-color-scheme:dark){:root{--bg:#121316;--card:#1d1f23;--fg:#e9eaec;--muted:#b4b8bf;--line:#8e939a;--accent:#8ab4f8;--accent-bg:#1e2a3f;--reported:#f2b866;--disputed:#f2a29b}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
-header.top,main,footer{max-width:72rem;margin:0 auto;padding:1.5rem}
+header.top,main,footer{max-width:91rem;margin:0 auto;padding:1.5rem}
 h1{font-size:1.9rem;line-height:1.2;margin:.25rem 0 .75rem}
 h2{font-size:1.35rem;margin:2rem 0 1rem}
 h3{font-size:1.05rem;margin:0 0 .35rem}
