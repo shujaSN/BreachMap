@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "id": "log4shell-2021",
+  "title": "Log4Shell: remote code execution in Apache Log4j 2 (CVE-2021-44228)",
+  "summary": "Log4Shell (CVE-2021-44228) was a critical flaw in Apache Log4j 2, a Java logging library built into thousands of products. A JNDI lookup feature added in 2013 let anyone who could get text into a log message make the server fetch and run code from a machine they controlled. Alibaba Cloud's security team reported it to Apache in November 2021. It became public on 10 December 2021 and was exploited at massive scale within hours by criminals and state-linked groups.",
+  "dates": {
+    "started": "2021-12-01",
+    "discovered": "2021-11-24",
+    "disclosed": "2021-12-10"
+  },
+  "identifiers": {
+    "cve": ["CVE-2021-44228"]
+  },
+  "entities": [
+    {
+      "id": "threat-actors",
+      "name": "Threat actors (criminal and state-linked)",
+      "kind": "attacker"
+    },
+    {
+      "id": "attacker-server",
+      "name": "Attacker-controlled LDAP or other JNDI server",
+      "kind": "attacker"
+    },
+    { "id": "java-app", "name": "Internet-facing Java application", "kind": "system" },
+    { "id": "log4j-core", "name": "Apache Log4j 2 library (log4j-core)", "kind": "system" },
+    { "id": "internal-network", "name": "Victim internal network", "kind": "system" },
+    { "id": "victim-orgs", "name": "Organizations running vulnerable software", "kind": "victim" }
+  ],
+  "steps": [
+    {
+      "id": "mass-scanning",
+      "title": "Attackers scan the internet for vulnerable servers",
+      "description": "Scanning for the flaw spiked less than two hours after it was published, and five days later Cloudflare saw about 400 exploit attempts per second. Botnets automated the search for targets. Many probes only asked the server to call back to an address the attacker watched, which proved it was vulnerable. Heavy scanning by security researchers made it hard to tell testing apart from real attacks.",
+      "phase": "reconnaissance",
+      "techniqueId": "T1595.002",
+      "from": "threat-actors",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["aa21-356a", "csrb-report", "cloudflare-payloads"]
+    },
+    {
+      "id": "evade-filters",
+      "title": "Attack text is disguised to slip past filters",
+      "description": "As defenders added web firewall rules that matched the known attack pattern, attackers reshaped their input. They changed letter case or used Log4j's own text substitution to rebuild blocked words only at the moment of logging. This let some attempts pass simple pattern matching at the network edge.",
+      "phase": "stealth",
+      "from": "threat-actors",
+      "to": "java-app",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance", "cloudflare-payloads"]
+    },
+    {
+      "id": "inject-lookup",
+      "title": "Attacker plants a lookup expression in data the app will log",
+      "description": "Log4j 2 treats certain text inside a log message as an instruction to look up and insert a value. An attacker with no account places such text in any input the application is likely to log, such as an HTTP header like the user agent, a form field, a username in a failed login or a chat message in a game.",
+      "phase": "initial-access",
+      "techniqueId": "T1190",
+      "from": "threat-actors",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["ghsa-advisory", "apache-security", "cloudflare-payloads", "microsoft-guidance"]
+    },
+    {
+      "id": "jndi-lookup",
+      "title": "Log4j follows the lookup out to the attacker's server",
+      "description": "When the app logs that text, log4j-core expands the lookup using its JNDI support, a feature accepted into the project in 2013 and shipped from version 2.0-beta9. In vulnerable versions nothing limited where JNDI could connect, so the server reaches out over LDAP, DNS or another JNDI protocol to an endpoint the attacker controls. Often this callback alone was used to confirm that a target was vulnerable.",
+      "phase": "execution",
+      "from": "log4j-core",
+      "to": "attacker-server",
+      "confidence": "confirmed",
+      "sourceIds": [
+        "cve-record",
+        "apache-security",
+        "aa21-356a",
+        "csrb-report",
+        "cloudflare-payloads"
+      ]
+    },
+    {
+      "id": "remote-code-load",
+      "title": "The server loads and runs code chosen by the attacker",
+      "description": "The attacker's server answers in a way that makes the Java process load and run code the attacker supplied. That code runs with the same rights as the application, so an unauthenticated attacker gains full control of the system. The flaw scored 10.0, the highest CVSS score, because it needed no privileges, no user interaction and had low attack complexity.",
+      "phase": "execution",
+      "from": "attacker-server",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": [
+        "apache-security",
+        "cve-record",
+        "ghsa-advisory",
+        "cisa-guidance",
+        "csrb-report",
+        "microsoft-guidance"
+      ]
+    },
+    {
+      "id": "miners-botnets",
+      "title": "Criminals install cryptominers and botnet malware",
+      "description": "Much of the early abuse was opportunistic. The FBI saw attackers use the flaw to plant cryptocurrency mining software and botnet malware on exposed servers, and researchers saw existing botnets such as Mirai quickly add the exploit to spread further.",
+      "phase": "impact",
+      "techniqueId": "T1496",
+      "from": "threat-actors",
+      "to": "java-app",
+      "confidence": "confirmed",
+      "sourceIds": ["aa21-356a", "csrb-report", "microsoft-guidance"]
+    },
+    {
+      "id": "remote-access",
+      "title": "Attackers drop remote access tools for hands-on control",
+      "description": "On some compromised servers attackers installed remote control tools such as Cobalt Strike, Meterpreter and reverse shells. This turned a single exploited request into a lasting, interactive foothold they could use for further work.",
+      "phase": "command-and-control",
+      "from": "threat-actors",
+      "to": "java-app",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance"]
+    },
+    {
+      "id": "credential-theft",
+      "title": "Stolen credentials are used to move deeper into the network",
+      "description": "From the foothold, attackers ran credential theft tools such as Mimikatz and used Cobalt Strike to collect credentials and move from the exposed server to other machines inside the victim's network. Some also took data out of compromised systems.",
+      "phase": "lateral-movement",
+      "from": "java-app",
+      "to": "internal-network",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance"]
+    },
+    {
+      "id": "access-ransomware",
+      "title": "Access is sold on and ransomware is deployed",
+      "description": "Some groups used the flaw only to break in, then sold that access to ransomware-as-a-service affiliates. Microsoft confirmed Khonsari ransomware delivered to compromised Minecraft clients through modified game servers, and NightSky ransomware deployed by a China-based operator it tracks as DEV-0401 after attacks on internet-facing VMware Horizon systems from January 2022. The US Cyber Safety Review Board also noted several ransomware incidents using the flaw into March 2022.",
+      "phase": "impact",
+      "techniqueId": "T1486",
+      "from": "threat-actors",
+      "to": "victim-orgs",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance", "csrb-report"]
+    },
+    {
+      "id": "state-actors",
+      "title": "State-linked groups adopt the exploit",
+      "description": "Microsoft reported nation-state activity groups from China, Iran, North Korea and Turkey using the flaw. It named PHOSPHORUS, an Iranian actor that adapted the exploit, and HAFNIUM, a China-based group that used it against virtualization infrastructure. The US Cyber Safety Review Board found no evidence that state actors used the flaw before it became public.",
+      "phase": "initial-access",
+      "techniqueId": "T1190",
+      "from": "threat-actors",
+      "to": "java-app",
+      "confidence": "reported",
+      "sourceIds": ["microsoft-guidance", "csrb-report"]
+    }
+  ],
+  "impact": {
+    "description": "Log4j is embedded so widely that the flaw touched virtually every networked organization, and an unauthenticated attacker could take full control of an affected system. Exploitation led to cryptomining, botnets and ransomware. Defenders spent huge effort finding and patching it; one US federal department reported 33,000 hours of response work. The Cyber Safety Review Board knew of no significant attacks on critical infrastructure, but judged Log4j an endemic vulnerability likely to remain in systems for a decade or longer.",
+    "sourceIds": ["csrb-report", "cisa-guidance", "aa21-356a"]
+  },
+  "defenses": [
+    {
+      "id": "upgrade-log4j",
+      "action": "Upgrade log4j-core to a fixed release and install vendor updates for every product that bundles it. Early fixes were incomplete, so CISA later urged 2.17.1 for Java 8, 2.12.4 for Java 7 and 2.3.2 for Java 6. Updating Java alone does not fix the flaw.",
+      "stepIds": ["inject-lookup", "jndi-lookup", "remote-code-load"],
+      "sourceIds": ["cisa-guidance", "aa21-356a", "ghsa-advisory", "apache-security"]
+    },
+    {
+      "id": "inventory-log4j",
+      "action": "Find every copy of Log4j, including copies nested inside other JAR files and container images, internal and non-internet-facing systems, and third-party or SaaS products. Keep an accurate software inventory, such as an SBOM, so the next flaw can be located quickly.",
+      "stepIds": ["inject-lookup", "remote-code-load"],
+      "sourceIds": ["cisa-guidance", "microsoft-guidance", "csrb-report"]
+    },
+    {
+      "id": "stopgap-mitigations",
+      "action": "If an upgrade must wait, apply a temporary mitigation such as removing the JndiLookup class from the library, or take the system off the network. These steps carry risk and are stopgaps, not a replacement for upgrading.",
+      "stepIds": ["jndi-lookup", "remote-code-load"],
+      "sourceIds": ["aa21-356a", "ghsa-advisory", "cisa-guidance"]
+    },
+    {
+      "id": "block-egress",
+      "action": "Block outbound LDAP and RMI traffic from servers, or allow only known destinations, and stop servers from sending DNS queries straight to the internet, so a lookup cannot reach an attacker's server.",
+      "stepIds": ["jndi-lookup", "remote-code-load"],
+      "sourceIds": ["aa21-356a"]
+    },
+    {
+      "id": "edge-filtering",
+      "action": "Place a web application firewall or intrusion prevention rules in front of exposed services as an extra layer, but do not rely on them alone, because disguised attack text can slip past simple pattern rules.",
+      "stepIds": ["mass-scanning", "evade-filters", "inject-lookup"],
+      "sourceIds": ["microsoft-guidance", "cloudflare-payloads"]
+    },
+    {
+      "id": "hunt-compromise",
+      "action": "Treat exposed systems as possibly compromised. Hunt for miners, unexpected shells, remote access tools, credential theft and odd outbound connections, review accounts and configuration changes made since 1 December 2021, and report incidents to CISA or the FBI.",
+      "stepIds": [
+        "miners-botnets",
+        "remote-access",
+        "credential-theft",
+        "access-ransomware",
+        "state-actors"
+      ],
+      "sourceIds": ["aa21-356a", "microsoft-guidance"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cve-record",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2021-44228",
+      "title": "CVE-2021-44228 (CVE record, assigned by Apache)",
+      "publisher": "CVE Program",
+      "type": "cve",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "apache-security",
+      "url": "https://logging.apache.org/security.html",
+      "title": "Security :: Apache Logging Services (CVE-2021-44228 entry)",
+      "publisher": "Apache Software Foundation",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "ghsa-advisory",
+      "url": "https://github.com/advisories/GHSA-jfh8-c2jp-5v3q",
+      "title": "Remote code injection in Log4j (GHSA-jfh8-c2jp-5v3q)",
+      "publisher": "GitHub Advisory Database",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-guidance",
+      "url": "https://www.cisa.gov/news-events/news/apache-log4j-vulnerability-guidance",
+      "title": "Apache Log4j Vulnerability Guidance",
+      "publisher": "Cybersecurity and Infrastructure Security Agency (CISA)",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "aa21-356a",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a",
+      "title": "AA21-356A: Mitigating Log4Shell and Other Log4j-Related Vulnerabilities",
+      "publisher": "CISA, FBI, NSA and international partners",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "csrb-report",
+      "url": "https://www.cisa.gov/sites/default/files/publications/CSRB-Report-on-Log4-July-11-2022_508.pdf",
+      "title": "Review of the December 2021 Log4j Event",
+      "publisher": "Cyber Safety Review Board (US Department of Homeland Security)",
+      "type": "report",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "microsoft-guidance",
+      "url": "https://www.microsoft.com/en-us/security/blog/2021/12/11/guidance-for-preventing-detecting-and-hunting-for-cve-2021-44228-log4j-2-exploitation/",
+      "title": "Guidance for preventing, detecting, and hunting for exploitation of the Log4j 2 vulnerability",
+      "publisher": "Microsoft Security",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cloudflare-payloads",
+      "url": "https://blog.cloudflare.com/actual-cve-2021-44228-payloads-captured-in-the-wild/",
+      "title": "Actual CVE-2021-44228 payloads captured in the wild",
+      "publisher": "Cloudflare",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    }
+  ],
+  "provenance": {
+    "createdBy": "skill",
+    "skillVersion": "0.1.0",
+    "createdAt": "2026-11-25"
+  }
+}

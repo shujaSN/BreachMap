@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "id": "xz-backdoor-2024",
+  "title": "xz Utils backdoor (CVE-2024-3094)",
+  "summary": "A contributor known as Jia Tan spent years earning trust in the XZ Utils compression project, then shipped release tarballs 5.6.0 and 5.6.1 that quietly built a backdoor into liblzma. On some Linux systems that library is loaded by the SSH server, so a holder of the attacker's private key could run commands before login. A developer noticed slow SSH logins and reported it on 2024-03-29, before stable distributions adopted the code. Who is behind the persona is not known.",
+  "dates": {
+    "started": "2021-10",
+    "discovered": "2024-03-28",
+    "disclosed": "2024-03-29"
+  },
+  "identifiers": {
+    "cve": ["CVE-2024-3094"]
+  },
+  "entities": [
+    { "id": "jia-tan", "name": "Jia Tan persona", "kind": "attacker" },
+    { "id": "xz-project", "name": "XZ Utils project", "kind": "victim" },
+    { "id": "release-tarballs", "name": "xz 5.6.0 and 5.6.1 tarballs", "kind": "system" },
+    { "id": "distributions", "name": "Linux distributions (testing builds)", "kind": "victim" },
+    { "id": "sshd", "name": "OpenSSH server (sshd)", "kind": "system" }
+  ],
+  "steps": [
+    {
+      "id": "build-trust",
+      "title": "Persona builds trust as a helpful contributor",
+      "description": "Starting in late 2021, an account called Jia Tan sent small, harmless patches to the XZ Utils mailing list and slowly became a regular contributor. CISA describes the whole operation as a multi-year effort to win the maintainer's trust before any malicious change appeared.",
+      "phase": "resource-development",
+      "from": "jia-tan",
+      "to": "xz-project",
+      "confidence": "confirmed",
+      "sourceIds": ["cisa-lessons", "rsc-timeline"]
+    },
+    {
+      "id": "pressure",
+      "title": "Other accounts pressure the maintainer",
+      "description": "During 2022, accounts such as Jigar Kumar and Dennis Ens complained on the mailing list that patches were merged too slowly and pushed the maintainer to hand over more control. The addresses behind these messages appear nowhere else online, and researchers describe them as likely fake accounts used to apply pressure.",
+      "phase": "resource-development",
+      "from": "jia-tan",
+      "to": "xz-project",
+      "confidence": "reported",
+      "sourceIds": ["rsc-timeline", "akamai"]
+    },
+    {
+      "id": "gain-access",
+      "title": "Persona gains maintainer and release rights",
+      "description": "By late 2022 Jia Tan had joined the project's GitHub organization and could commit directly, and from 2023 tagged releases. The original maintainer later confirmed that Jia Tan created and signed the 5.6.0 and 5.6.1 tarballs and had access to the GitHub-hosted parts of the project.",
+      "phase": "initial-access",
+      "from": "jia-tan",
+      "to": "xz-project",
+      "confidence": "confirmed",
+      "sourceIds": ["tukaani", "rsc-timeline"]
+    },
+    {
+      "id": "weaken-fuzzing",
+      "title": "Changes reduce automated testing coverage",
+      "description": "In 2023 Jia Tan merged support for ifunc, a mechanism that picks code at load time and that analysts believe the backdoor relied on. Jia Tan then turned ifunc off in the project's OSS-Fuzz builds and routed fuzzing reports to their own address, which researchers see as keeping the later hidden code away from automated checks.",
+      "phase": "defense-impairment",
+      "from": "jia-tan",
+      "to": "xz-project",
+      "confidence": "reported",
+      "sourceIds": ["rsc-timeline", "jfrog"]
+    },
+    {
+      "id": "hide-payload",
+      "title": "Payload hidden in binary test files",
+      "description": "In February 2024 two binary test files were committed to the public repository. They looked like sample compressed data for the test suite, but they actually held an obfuscated part of the backdoor, and no test in 5.6.0 used them.",
+      "phase": "stealth",
+      "techniqueId": "T1027",
+      "from": "jia-tan",
+      "to": "xz-project",
+      "confidence": "confirmed",
+      "sourceIds": ["freund-disclosure", "redhat", "cve-record", "rsc-timeline"]
+    },
+    {
+      "id": "ship-tarballs",
+      "title": "Release tarballs carry a hidden build trigger",
+      "description": "Versions 5.6.0 and 5.6.1, published in February and March 2024, shipped as tarballs with an altered build macro file that was not in the git repository. Anyone reviewing the git history could not see this piece, and it was the switch that pulled the hidden payload into the build.",
+      "phase": "initial-access",
+      "techniqueId": "T1195.002",
+      "from": "jia-tan",
+      "to": "release-tarballs",
+      "confidence": "confirmed",
+      "sourceIds": ["freund-disclosure", "redhat", "tukaani", "rsc-timeline"]
+    },
+    {
+      "id": "lobby-distros",
+      "title": "Accounts urge distributions to adopt 5.6.x",
+      "description": "In February and March 2024, Jia Tan contacted a Fedora developer about updating Fedora 40 and filed an Ubuntu request for 5.6.1, while another account, Hans Jansen, asked Debian to move to 5.6.1. These requests aimed to get the backdoored versions into distributions quickly.",
+      "phase": "initial-access",
+      "from": "jia-tan",
+      "to": "distributions",
+      "confidence": "reported",
+      "sourceIds": ["rsc-timeline"]
+    },
+    {
+      "id": "build-inject",
+      "title": "Distribution builds inject the backdoor into liblzma",
+      "description": "When a distribution built a package from these tarballs, the altered macro ran a disguised script at the end of configuration that pulled code out of the test files and altered the liblzma library. It only acted on x86-64 Linux with glibc, GCC and the GNU linker during Debian or RPM package builds, conditions the discoverer suspected were chosen to hinder investigation.",
+      "phase": "execution",
+      "from": "release-tarballs",
+      "to": "distributions",
+      "confidence": "confirmed",
+      "sourceIds": ["freund-disclosure", "cve-record", "debian-dsa"]
+    },
+    {
+      "id": "sshd-hook",
+      "title": "Tampered library hooks SSH authentication",
+      "description": "OpenSSH does not use liblzma itself, but several distributions patch the SSH server to notify systemd, and libsystemd depends on liblzma. As sshd started, the backdoored library redirected RSA_public_decrypt, a function used while checking keys during public key login, to its own code.",
+      "phase": "persistence",
+      "from": "distributions",
+      "to": "sshd",
+      "confidence": "confirmed",
+      "sourceIds": ["freund-disclosure", "redhat", "jfrog"]
+    },
+    {
+      "id": "key-gated",
+      "title": "Key-gated remote command execution",
+      "description": "Analysis showed the hook looked for a hidden command inside key data sent by a connecting client. Only a command signed with the attacker's private Ed448 key was run, before any login took place; anything else made sshd behave normally. So only the key holder could use it, and network scanners could not reliably find it.",
+      "phase": "execution",
+      "from": "jia-tan",
+      "to": "sshd",
+      "confidence": "reported",
+      "sourceIds": ["valsorda-analysis", "jfrog", "freund-disclosure"]
+    }
+  ],
+  "impact": {
+    "description": "Backdoored xz builds reached Debian testing, unstable and experimental, plus Fedora Rawhide and the Fedora 40 beta, but no Debian stable or RHEL release. On affected systems running SSH, a holder of the attacker's key could have run commands remotely. The CVE is scored 10.0, critical. Andres Freund noticed slow SSH logins and valgrind errors and went public on 2024-03-29, about a month after 5.6.0 shipped, so wide harm was avoided.",
+    "sourceIds": [
+      "debian-dsa",
+      "redhat",
+      "cve-record",
+      "freund-disclosure",
+      "cisa-lessons",
+      "rsc-timeline"
+    ]
+  },
+  "defenses": [
+    {
+      "id": "downgrade",
+      "action": "Find hosts with xz or liblzma 5.6.0 or 5.6.1, move them to a clean 5.4.x build from the distribution, then restart sshd or reboot so the tampered library is no longer loaded.",
+      "stepIds": ["build-inject", "sshd-hook", "key-gated"],
+      "sourceIds": ["cisa-alert", "debian-dsa", "redhat", "jfrog"]
+    },
+    {
+      "id": "hunt-sshd",
+      "action": "Hunt for signs of misuse on exposed servers, such as unexpected processes started by the SSH daemon, and report any findings.",
+      "stepIds": ["key-gated"],
+      "sourceIds": ["cisa-alert", "akamai"]
+    },
+    {
+      "id": "compare-builds",
+      "action": "Build from trusted source snapshots where possible, or rebuild from git and compare the binaries, so changes that exist only in a release tarball stand out.",
+      "stepIds": ["ship-tarballs", "build-inject"],
+      "sourceIds": ["malka"]
+    },
+    {
+      "id": "review-and-isolate",
+      "action": "Apply regular code review and security scanning tools to open source dependencies, and keep build environments isolated.",
+      "stepIds": ["hide-payload", "build-inject"],
+      "sourceIds": ["cisa-lessons"]
+    },
+    {
+      "id": "support-maintainers",
+      "action": "Give critical open source projects funding or developer time, so a single overworked maintainer is not left alone against long trust-building and pressure campaigns.",
+      "stepIds": ["build-trust", "pressure", "gain-access"],
+      "sourceIds": ["cisa-lessons"]
+    },
+    {
+      "id": "avoid-prerelease",
+      "action": "Keep testing and pre-release distributions off work systems, and stop using affected ones until xz is rolled back.",
+      "stepIds": ["lobby-distros", "build-inject"],
+      "sourceIds": ["redhat"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cve-record",
+      "url": "https://cveawg.mitre.org/api/cve/CVE-2024-3094",
+      "title": "CVE-2024-3094 record",
+      "publisher": "CVE Program",
+      "type": "cve",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-alert",
+      "url": "https://www.cisa.gov/news-events/alerts/2024/03/29/reported-supply-chain-compromise-affecting-xz-utils-data-compression-library-cve-2024-3094",
+      "title": "Reported Supply Chain Compromise Affecting XZ Utils Data Compression Library, CVE-2024-3094",
+      "publisher": "CISA",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "debian-dsa",
+      "url": "https://lists.debian.org/debian-security-announce/2024/msg00057.html",
+      "title": "[DSA 5649-1] xz-utils security update",
+      "publisher": "Debian",
+      "type": "advisory",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "freund-disclosure",
+      "url": "https://www.openwall.com/lists/oss-security/2024/03/29/4",
+      "title": "backdoor in upstream xz/liblzma leading to ssh server compromise",
+      "publisher": "Openwall oss-security list",
+      "type": "report",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "tukaani",
+      "url": "https://tukaani.org/xz-backdoor/",
+      "title": "XZ Utils backdoor",
+      "publisher": "Tukaani Project",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "redhat",
+      "url": "https://www.redhat.com/en/blog/urgent-security-alert-fedora-41-and-rawhide-users",
+      "title": "Urgent security alert for Fedora Linux 40 and Fedora Rawhide users",
+      "publisher": "Red Hat",
+      "type": "vendor",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "cisa-lessons",
+      "url": "https://www.cisa.gov/news-events/news/lessons-xz-utils-achieving-more-sustainable-open-source-ecosystem",
+      "title": "Lessons from XZ Utils: Achieving a More Sustainable Open Source Ecosystem",
+      "publisher": "CISA",
+      "type": "report",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "rsc-timeline",
+      "url": "https://research.swtch.com/xz-timeline",
+      "title": "Timeline of the xz open source attack",
+      "publisher": "research!rsc (Russ Cox)",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "valsorda-analysis",
+      "url": "https://www.openwall.com/lists/oss-security/2024/03/30/36",
+      "title": "Re: backdoor in upstream xz/liblzma leading to ssh server compromise",
+      "publisher": "Openwall oss-security list",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "jfrog",
+      "url": "https://jfrog.com/blog/xz-backdoor-attack-cve-2024-3094-all-you-need-to-know/",
+      "title": "CVE-2024-3094 XZ Backdoor: All you need to know",
+      "publisher": "JFrog Security Research",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "akamai",
+      "url": "https://www.akamai.com/blog/security-research/critical-linux-backdoor-xz-utils-discovered-what-to-know",
+      "title": "XZ Utils Backdoor: Everything You Need to Know, and What You Can Do",
+      "publisher": "Akamai Security Intelligence Group",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    },
+    {
+      "id": "malka",
+      "url": "https://luj.fr/blog/how-nixos-could-have-detected-xz.html",
+      "title": "How NixOS and reproducible builds could have detected the xz backdoor for the benefit of all",
+      "publisher": "Julien Malka",
+      "type": "research",
+      "retrievedAt": "2026-11-25"
+    }
+  ],
+  "provenance": {
+    "createdBy": "skill",
+    "skillVersion": "0.1.0",
+    "createdAt": "2026-11-25"
+  }
+}

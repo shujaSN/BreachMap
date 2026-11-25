@@ -1,0 +1,96 @@
+{
+  "steps": [
+    {
+      "stepId": "probe-moveit-servers",
+      "supported": true,
+      "note": "BleepingComputer reports Kroll saw activity in April 2022 and as early as July 2021 pulling back org info; Mandiant ties the May 19-22 RDP certs to second-stage hosts, not the scanning hosts, but reported fits."
+    },
+    {
+      "stepId": "exploit-sql-injection",
+      "supported": true,
+      "note": "Progress describes the unauthenticated SQLi DB access, CISA says CL0P exploited it from May 27 per open-source info and added it to KEV on June 2."
+    },
+    {
+      "stepId": "plant-web-shell",
+      "supported": true,
+      "note": "CISA calls LEMURLOOT a C# web shell used for persistence and data theft, and Mandiant notes theft within minutes of deployment."
+    },
+    {
+      "stepId": "disguise-web-shell",
+      "supported": true,
+      "note": "Mandiant says human2.aspx masquerades as human.aspx, requires a GUID header and returns 404 otherwise."
+    },
+    {
+      "stepId": "map-files-and-database",
+      "supported": true,
+      "note": "Mandiant lists enumerating files and folders and retrieving configuration, and CISA lists enumerating the SQL database."
+    },
+    {
+      "stepId": "create-admin-account",
+      "supported": true,
+      "note": "Mandiant and CISA describe creating and deleting a Health Check Service admin user, and CISA warns the accounts survive a web server rebuild."
+    },
+    {
+      "stepId": "grab-azure-keys",
+      "supported": true,
+      "note": "CISA and Mandiant confirm the shell reads Azure Blob settings and keys, Progress advises rotating keys, and the conservative reported label fits the unconfirmed Azure theft."
+    },
+    {
+      "stepId": "steal-files",
+      "supported": true,
+      "note": "Mandiant reports large gzip-compressed file theft from different hosts than the exploit, and CISA says the shell stole data from MOVEit databases."
+    },
+    {
+      "stepId": "extort-victims",
+      "supported": true,
+      "note": "Talos gives a June 5 leak-site post with a June 14 deadline, Mandiant gives June 6 and FIN11, and BleepingComputer cites Microsoft's Lace Tempest link."
+    }
+  ],
+  "covered": [
+    {
+      "goldenStepId": "exploit-sql-injection",
+      "covered": true,
+      "note": "Matches output exploit-sql-injection, attacker to MOVEit web app via unauthenticated SQLi."
+    },
+    {
+      "goldenStepId": "gain-admin-control",
+      "covered": false,
+      "note": "No output step describes turning SQLi database access into admin-level control of the app."
+    },
+    {
+      "goldenStepId": "run-code-on-server",
+      "covered": false,
+      "note": "No output step describes the app being made to run attacker code on the Windows server."
+    },
+    {
+      "goldenStepId": "plant-web-shell",
+      "covered": true,
+      "note": "Matches output plant-web-shell, with the human2.aspx detail in disguise-web-shell."
+    },
+    {
+      "goldenStepId": "create-admin-account",
+      "covered": true,
+      "note": "Matches output create-admin-account, web shell adding a Health Check Service admin to the database."
+    },
+    {
+      "goldenStepId": "map-data",
+      "covered": true,
+      "note": "Matches output map-files-and-database, web shell listing the database, files and folders."
+    },
+    {
+      "goldenStepId": "steal-azure-keys",
+      "covered": true,
+      "note": "Matches output grab-azure-keys, web shell reading Azure Blob settings and keys."
+    },
+    {
+      "goldenStepId": "exfiltrate-files",
+      "covered": true,
+      "note": "Matches output steal-files, bulk compressed file download from MOVEit to the attacker."
+    },
+    {
+      "goldenStepId": "extort-victims",
+      "covered": true,
+      "note": "Matches output extort-victims, CL0P pressing victims through its leak site."
+    }
+  ]
+}

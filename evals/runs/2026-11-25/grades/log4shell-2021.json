@@ -1,0 +1,107 @@
+{
+  "steps": [
+    {
+      "stepId": "mass-scanning",
+      "supported": true,
+      "note": "CSRB report cites a scan spike under two hours after publication, 400 attempts/sec at day five, botnet recon and research noise."
+    },
+    {
+      "stepId": "evade-filters",
+      "supported": true,
+      "note": "Cloudflare shows ${lower} tricks to evade simple jndi blocking and Microsoft notes upper/lower obfuscation to bypass string matching."
+    },
+    {
+      "stepId": "inject-lookup",
+      "supported": true,
+      "note": "Apache says attackers who control log messages can exploit it; Microsoft lists User-Agent, account name and in-game messages as vectors."
+    },
+    {
+      "stepId": "jndi-lookup",
+      "supported": true,
+      "note": "Apache/CVE say JNDI does not guard against attacker-controlled LDAP endpoints, CSRB dates the feature to 2013/2.0-beta9, Cloudflare shows LDAP/DNS callbacks."
+    },
+    {
+      "stepId": "remote-code-load",
+      "supported": true,
+      "note": "Apache and GHSA say arbitrary code is loaded from LDAP servers with CVSS 10.0 (AC:L/PR:N/UI:N); CISA says full control."
+    },
+    {
+      "stepId": "miners-botnets",
+      "supported": true,
+      "note": "AA21-356A cites FBI seeing cryptomining and botnet malware; Microsoft notes rapid uptake into Mirai."
+    },
+    {
+      "stepId": "remote-access",
+      "supported": true,
+      "note": "Microsoft reports Cobalt Strike, PowerShell reverse shells and Meterpreter; reported label fits."
+    },
+    {
+      "stepId": "credential-theft",
+      "supported": true,
+      "note": "Microsoft reports Mimikatz credential theft, Cobalt Strike lateral movement and data exfiltration."
+    },
+    {
+      "stepId": "access-ransomware",
+      "supported": true,
+      "note": "Microsoft covers access brokers selling to RaaS, Khonsari via modified Minecraft servers and DEV-0401 NightSky from 4 Jan; CSRB notes Jan-Mar 2022 cases."
+    },
+    {
+      "stepId": "state-actors",
+      "supported": true,
+      "note": "Microsoft names China/Iran/North Korea/Turkey groups, PHOSPHORUS and HAFNIUM; CSRB found no pre-disclosure state use."
+    }
+  ],
+  "covered": [
+    {
+      "goldenStepId": "mass-scanning",
+      "covered": true,
+      "note": "Matches output mass-scanning (attacker to Java app)."
+    },
+    {
+      "goldenStepId": "inject-lookup",
+      "covered": true,
+      "note": "Matches output inject-lookup, and evade-filters covers the disguise detail."
+    },
+    {
+      "goldenStepId": "jndi-callback",
+      "covered": true,
+      "note": "Matches output jndi-lookup (log4j-core to attacker server)."
+    },
+    {
+      "goldenStepId": "remote-code-load",
+      "covered": true,
+      "note": "Matches output remote-code-load (attacker server to Java app)."
+    },
+    {
+      "goldenStepId": "leak-secrets",
+      "covered": false,
+      "note": "No output step covers leaking env vars or secrets through the lookup callback itself."
+    },
+    {
+      "goldenStepId": "coin-miners-botnets",
+      "covered": true,
+      "note": "Matches output miners-botnets."
+    },
+    {
+      "goldenStepId": "remote-access-tools",
+      "covered": true,
+      "note": "Matches output remote-access."
+    },
+    {
+      "goldenStepId": "lateral-movement",
+      "covered": true,
+      "note": "Matches output credential-theft (Java app to internal network)."
+    },
+    {
+      "goldenStepId": "exfiltrate-data",
+      "covered": false,
+      "note": "Only a side sentence in credential-theft; no step for data leaving the internal network to the attackers."
+    },
+    {
+      "goldenStepId": "ransomware",
+      "covered": true,
+      "note": "Matches output access-ransomware (attacker to victim)."
+    },
+    { "goldenStepId": "state-actors", "covered": true, "note": "Matches output state-actors." }
+  ]
+}

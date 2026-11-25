@@ -1,0 +1,111 @@
+{
+  "steps": [
+    {
+      "stepId": "build-trust",
+      "supported": true,
+      "note": "CISA lessons calls it a multi-year effort to gain the maintainer's trust, and the rsc timeline dates Jia Tan's first patch to 2021-10-29."
+    },
+    {
+      "stepId": "pressure",
+      "supported": true,
+      "note": "The rsc timeline names Jigar Kumar and Dennis Ens in June 2022 and says they were likely fakes, and Akamai says the attacker used fake accounts to pressure the maintainer."
+    },
+    {
+      "stepId": "gain-access",
+      "supported": true,
+      "note": "The rsc timeline shows the GitHub org, commit access and first tagged release, and Tukaani confirms Jia Tan made and signed 5.6.0/5.6.1 and had the GitHub-hosted access."
+    },
+    {
+      "stepId": "weaken-fuzzing",
+      "supported": true,
+      "note": "The rsc timeline says Jia Tan merged the ifunc commit, turned ifunc off in OSS-Fuzz and pointed OSS-Fuzz bugs to themself, and JFrog backs this; 'reported' fits."
+    },
+    {
+      "stepId": "hide-payload",
+      "supported": true,
+      "note": "Freund says the obfuscated exploit sits in test files that no 5.6.0 test used, and the rsc timeline dates Jia Tan's commit to 2024-02-23."
+    },
+    {
+      "stepId": "ship-tarballs",
+      "supported": true,
+      "note": "Freund and the rsc timeline say the 5.6.0/5.6.1 tarballs held a modified build-to-host.m4 that is not in the git repository."
+    },
+    {
+      "stepId": "lobby-distros",
+      "supported": true,
+      "note": "The rsc timeline records Jia Tan's Fedora 40 email and Ubuntu bug, and Hans Jansen's Debian bug for 5.6.1; 'reported' fits."
+    },
+    {
+      "stepId": "build-inject",
+      "supported": true,
+      "note": "Freund describes the end-of-configure script, the x86-64 Linux, gcc, GNU ld and deb/rpm conditions, and his anti-investigation suspicion; the CVE record backs the liblzma change."
+    },
+    {
+      "stepId": "sshd-hook",
+      "supported": true,
+      "note": "Freund says OpenSSH does not use liblzma directly, distro systemd-notify patches pull in libsystemd and liblzma, and RSA_public_decrypt is redirected."
+    },
+    {
+      "stepId": "key-gated",
+      "supported": true,
+      "note": "Valsorda's analysis says the payload comes from the key's N value, is checked against a fixed Ed448 key and passed to system() before login, sshd otherwise acts normally, and no reliable scanner is possible."
+    }
+  ],
+  "covered": [
+    {
+      "goldenStepId": "build-trust",
+      "covered": true,
+      "note": "Matched by output build-trust (attacker earns trust from the victim project)."
+    },
+    {
+      "goldenStepId": "pressure-maintainer",
+      "covered": true,
+      "note": "Matched by output pressure, the same sock-puppet campaign aimed at the maintainer and project."
+    },
+    {
+      "goldenStepId": "gain-release-access",
+      "covered": true,
+      "note": "Matched by output gain-access (commit and release rights, signed tarballs)."
+    },
+    {
+      "goldenStepId": "disable-fuzz-ifunc",
+      "covered": true,
+      "note": "Matched by output weaken-fuzzing (ifunc turned off in OSS-Fuzz)."
+    },
+    {
+      "goldenStepId": "hide-payload-tests",
+      "covered": true,
+      "note": "Matched by output hide-payload (obfuscated payload in binary test files)."
+    },
+    {
+      "goldenStepId": "tamper-release-tarballs",
+      "covered": true,
+      "note": "Matched by output ship-tarballs (tampered build macro found only in release tarballs)."
+    },
+    {
+      "goldenStepId": "reach-distros",
+      "covered": false,
+      "note": "No output step says the backdoored versions were actually packaged by Debian testing or Fedora; lobby-distros covers only the push to adopt, and the spread appears only in impact."
+    },
+    {
+      "goldenStepId": "build-injection",
+      "covered": true,
+      "note": "Matched by output build-inject (a distro package build injects code into liblzma)."
+    },
+    {
+      "goldenStepId": "hide-from-analysis",
+      "covered": false,
+      "note": "No output step covers the runtime environment and debugger checks on sshd hosts; build-inject covers only the build-time conditions."
+    },
+    {
+      "goldenStepId": "hook-sshd",
+      "covered": true,
+      "note": "Matched by output sshd-hook (liblzma via libsystemd hooks the sshd RSA check)."
+    },
+    {
+      "goldenStepId": "remote-access",
+      "covered": true,
+      "note": "Matched by output key-gated (key-gated remote command execution on sshd)."
+    }
+  ]
+}

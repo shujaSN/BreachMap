@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-25",
+  "skillVersion": "0.1.0",
+  "ids": ["log4shell-2021", "moveit-transfer-2023", "xz-backdoor-2024"],
+  "E1": 1,
+  "E2": 0,
+  "E3": 1,
+  "E4": 0.8064516129032258,
+  "pass": {
+    "E1": true,
+    "E2": true,
+    "E3": true,
+    "E4": true
+  },
+  "broken": [],
+  "ungraded": [],
+  "unverified": ["log4shell-2021", "moveit-transfer-2023", "xz-backdoor-2024"],
+  "provisional": true,
+  "spotCheck": [
+    {
+      "id": "log4shell-2021",
+      "stepId": "mass-scanning"
+    },
+    {
+      "id": "log4shell-2021",
+      "stepId": "miners-botnets"
+    },
+    {
+      "id": "moveit-transfer-2023",
+      "stepId": "probe-moveit-servers"
+    },
+    {
+      "id": "moveit-transfer-2023",
+      "stepId": "create-admin-account"
+    },
+    {
+      "id": "xz-backdoor-2024",
+      "stepId": "pressure"
+    },
+    {
+      "id": "xz-backdoor-2024",
+      "stepId": "lobby-distros"
+    }
+  ]
+}
