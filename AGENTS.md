@@ -49,6 +49,13 @@ randomness or Node built-ins in schema/core/render (render may use `node:crypto`
 - Report problems as `Issue` objects `{ path, message, fix }` (`packages/core/src/issues.ts`).
 - Require a source URL for every incident step.
 - Give every custom schema rule an exact message and a `params.fix` hint (FR-5).
+- Build HTML only with the `html` tagged template (`packages/render/src/html.ts`). It escapes
+  every value and throws (a coding bug, caught by tests) when a value or nested `html` sits outside
+  a strict grammar of the template text before it: `<` only starts a tag; no comments or `<!`
+  except a leading `<!doctype html>`; values only in text or a double-quoted value of an allowed
+  attribute (`href` must be `https://` or `#…`); `<script>`/`<style>` only in a full page before
+  any svg, holding only value-free templates; nested `html` only in plain text, never leaving a
+  tag or svg open. Any meta refresh throws.
 - End relative imports in `.ts` and use only erasable TypeScript (no `enum`, `namespace`),
   so Node runs the sources directly (`node scripts/check-arch.ts`).
 - Put tests next to the code as `*.test.ts`.

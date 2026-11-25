@@ -207,6 +207,8 @@ importers:
         specifier: workspace:*
         version: link:../schema
 
+  packages/render: {}
+
   packages/schema:
     dependencies:
       zod:

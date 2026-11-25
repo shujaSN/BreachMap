@@ -31,7 +31,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 ## Phase 3: Render
 
-- [ ] **T10** `html` tagged template that escapes by default. (NFR-1, FR-3)
+- [x] **T10** `html` tagged template that escapes by default. (NFR-1, FR-3)
 - [ ] **T11** Static page: head with CSP, header, steps, impact, defenses, sources, footer;
   file snapshot. (FR-7, FR-8, FR-10, FR-11, FR-12, NFR-2)
 - [ ] **T12** SVG sequence diagram from `layout()`. (FR-8, FR-10, ADR 0003)
