@@ -13,6 +13,8 @@ Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest, Biome. ESM only.
 - Update snapshots, only when the output change is intended: `pnpm test -u`
 - Run the CLI from source: `pnpm breachmap validate fixtures/valid.json` (also `render`, `new`)
 - Bundle the published CLI to `packages/cli/dist/cli.js`: `pnpm build`
+- Score an eval run (spec section 10): `pnpm eval:score evals/runs/<date>`. Grades for E3/E4 come
+  from the `eval-grader` subagent in `evals/runs/<date>/grades/<id>.json`; results go to `evals/results/`.
 - `pnpm-workspace.yaml` sets `allowBuilds: esbuild: false`: no install scripts run; approve new ones only on purpose
 
 ## Claude Code

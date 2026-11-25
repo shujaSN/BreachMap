@@ -5,5 +5,5 @@
     "allowImportingTsExtensions": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["packages/*/src", "scripts", "*.config.ts"]
+  "include": ["packages/*/src", "scripts", "evals", "*.config.ts"]
 }

@@ -60,7 +60,7 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 - [ ] **T26** 👤 Gallery: MOVEit Transfer. (FR-21, FR-22)
 - [ ] **T27** 👤 Gallery: GitHub MCP prompt-injection data leak. (FR-21, FR-22)
 - [ ] **T28** 👤 3 golden files in `evals/golden/`. (spec section 10)
-- [ ] **T29** Eval scorer `pnpm eval:score` (E1, E2) and `eval-grader` subagent (E3, E4). (AC8)
+- [x] **T29** Eval scorer `pnpm eval:score` (E1, E2) and `eval-grader` subagent (E3, E4). (AC8)
 - [ ] **T30** 👤 Run evals and meet all E1 to E4 targets. (AC7, AC8)
 - [ ] **T31** 👤 Browser checks in Chrome, Firefox and Safari: offline, zero requests,
   JS off, keyboard only. (AC2, AC5, AC6, NFR-5)
