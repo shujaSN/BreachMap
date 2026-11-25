@@ -1,0 +1,24 @@
+{
+  "name": "breachmap",
+  "version": "0.1.0",
+  "description": "Turn a security incident into a sourced, interactive attack map: one offline HTML file.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "breachmap": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@breachmap/core": "workspace:*",
+    "@breachmap/render": "workspace:*",
+    "@breachmap/schema": "workspace:*"
+  }
+}

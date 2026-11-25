@@ -144,11 +144,11 @@ It calls `validate()` first and refuses invalid input (FR-7).
 ### 4.5 CLI (`packages/cli`)
 
 - `run(argv, io): Promise<number>` holds all logic. `io` has `readFile`, `writeFile`,
-  `exists`, `out`, `err` and `today`. `bin.ts` connects it to real Node APIs. Tests use a fake `io`.
+  `createFile` (never overwrites), `out`, `err` and `today`. `bin.ts` connects it to real Node APIs. Tests use a fake `io`.
 - Error lines: `<file>: <path>: <message>` then `  fix: <fix>`. Control characters in printed
   text are replaced, so incident data cannot drive the terminal.
 - `validate <file...>`: exit 0 if all valid, 1 if any is invalid or unreadable. Bad JSON is
-  reported at `(root)` with the parser's position.
+  reported at `(root)` as "is not valid JSON" (parser messages differ between Node versions).
 - `render <file> [-o <out>]`: default output is the input path with `.html`. Exit 1 on invalid input.
 - `new <id>`: writes `./<id>.json`. A bad id exits 2. An existing file is never
   overwritten (exit 1). The starter passes validation (TODO text, `https://example.com` sources),

@@ -44,10 +44,10 @@ Each task: failing test → code → `pnpm check` → reviewer → commit → ti
 
 ## Phase 4: CLI
 
-- [ ] **T17** `run()` with `parseArgs`: `--help`, `--version`, usage errors exit 2. (FR-16)
-- [ ] **T18** `validate` command. (FR-13, FR-5, AC1)
-- [ ] **T19** `render` command. (FR-14, FR-7)
-- [ ] **T20** `new` command. (FR-15)
+- [x] **T17** `run()` with `parseArgs`: `--help`, `--version`, usage errors exit 2. (FR-16)
+- [x] **T18** `validate` command. (FR-13, FR-5, AC1)
+- [x] **T19** `render` command. (FR-14, FR-7)
+- [x] **T20** `new` command. (FR-15)
 - [ ] **T21** `bin.ts`, `pnpm breachmap`, esbuild bundle with `pnpm build`, spawn test. (FR-16, ADR 0001)
 
 ## Phase 5: Skill, gallery, evals

@@ -201,6 +201,18 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1(@types/node@26.6.6)(@vitest/coverage-v8@5.1.1)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6))
 
+  packages/cli:
+    devDependencies:
+      '@breachmap/core':
+        specifier: workspace:*
+        version: link:../core
+      '@breachmap/render':
+        specifier: workspace:*
+        version: link:../render
+      '@breachmap/schema':
+        specifier: workspace:*
+        version: link:../schema
+
   packages/core:
     dependencies:
       '@breachmap/schema':
