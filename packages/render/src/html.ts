@@ -120,8 +120,9 @@ function part(value: unknown, place: Place): string {
   if (place.kind !== "attr") return text(value, place.kind === "text");
   if (Array.isArray(value)) fail("an array cannot go in an attribute");
   const out = text(value, false);
-  const url = place.prefix.startsWith("#") || (!place.prefix && /^(https:\/\/|#)/.test(out));
-  if (place.name === "href" && !url) fail("href must be an https URL or a #anchor");
+  const url =
+    /^(#|[a-z0-9-]+\/)/.test(place.prefix) || (!place.prefix && /^(https:\/\/|#)/.test(out));
+  if (place.name === "href" && !url) fail("href must be an https URL, a #anchor or a folder/ path");
   return out;
 }
 

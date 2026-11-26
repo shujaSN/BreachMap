@@ -6,6 +6,8 @@ Turns a validated incident into one offline HTML file. Pure and deterministic.
 - `render.ts`: `render(input, { version })` validates with core and returns `Result<string, Issue[]>`.
   It refuses maps over 250 KB (ADR 0004).
 - `page.ts`: the page: head with CSP, header, flow, impact, defenses, sources, footer.
+- `gallery.ts`: `renderGallery(incidents, meta)`, the gallery landing page (spec 002). CSS only, no
+  script. Not in `index.ts`, so the CLI bundle stays small: import `gallery.ts` directly.
 - `diagram.ts`: the SVG sequence diagram from core `layout()`.
 - `assets.ts`: the fixed CSS and script. Their sha256 hashes go into the CSP.
 - `html.ts`: the escaping `html` template. The only way to build HTML.
@@ -16,9 +18,9 @@ Turns a validated incident into one offline HTML file. Pure and deterministic.
   `insertAdjacentHTML`, `document.write`, `eval`, `new Function` or string timers.
 - Put incident values only in text or in a double-quoted allowed attribute. No fixed `style=` or
   `on*=` attributes either (the CSP would block them).
-- Links: in-page links go to `#step-${id}` or `#src-${id}`. External `href`s come only from
-  schema-checked source URLs (normalized with `new URL(url).href`) or checked technique ids, and
-  always have `rel="noopener noreferrer"`.
+- Links: in-page links go to `#step-${id}` or `#src-${id}`; gallery cards link `maps/${id}.html`.
+  External `href`s come only from schema-checked source URLs (normalized with `new URL(url).href`),
+  checked technique ids, or the fixed repo link, and always have `rel="noopener noreferrer"`.
 - Ids from incident data get a prefix: `step-`, `src-`, `def-`. Fixed ids must not use those
   prefixes (the controls use `nav-`).
 - Wrap inline incident text that sits next to fixed text in `<bdi>`. Where markup is not allowed
@@ -38,3 +40,5 @@ Turns a validated incident into one offline HTML file. Pure and deterministic.
 - `render.test.ts`: page structure, CSP and the file snapshot.
 - `diagram.test.ts`, `script.test.ts` (runs the script in happy-dom), `assets.test.ts` (contrast).
 - `safety.test.ts`: AC3 (XSS), AC4 (same bytes), no network, size and speed budgets.
+- `gallery.test.ts`: the landing page: cards, matrix, evals, CSP, escaping. Its CSS is tested in
+  `assets.test.ts`.

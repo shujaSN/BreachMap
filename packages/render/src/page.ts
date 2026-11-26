@@ -7,7 +7,7 @@ import { type Html, html } from "./html.ts";
 
 type Step = Incident["steps"][number];
 
-const hashOf = (asset: Html) =>
+export const hashOf = (asset: Html) =>
   `'sha256-${createHash("sha256").update(asset.html).digest("base64")}'`;
 
 const CSP = [

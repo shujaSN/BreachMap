@@ -631,3 +631,41 @@ describe("html strict template grammar", () => {
     expect(render().html).toBe(out);
   });
 });
+
+describe("html relative map links", () => {
+  it.each<[string, () => Html, string]>([
+    [
+      "a maps/ prefix",
+      () => html`<a href="maps/${"x-1"}.html">a</a>`,
+      `<a href="maps/x-1.html">a</a>`,
+    ],
+    [
+      "a quote and < after a path prefix",
+      () => html`<a href="maps/${'a"<b'}.html">a</a>`,
+      `<a href="maps/a&quot;&lt;b.html">a</a>`,
+    ],
+    [
+      "a scheme-like value after a path prefix",
+      () => html`<a href="maps/${"javascript:alert(1)"}">a</a>`,
+      `<a href="maps/javascript:alert(1)">a</a>`,
+    ],
+    [
+      "a folder with digits and a hyphen",
+      () => html`<a href="a-1/${"x"}">a</a>`,
+      `<a href="a-1/x">a</a>`,
+    ],
+  ])("S002 FR-2, NFR-1: allows %s", (_name, render, out) => {
+    expect(render().html).toBe(out);
+  });
+
+  it.each<[string, () => Html]>([
+    ["a / prefix", () => html`<a href="/${"/example.com"}">a</a>`],
+    ["a relative path as the whole value", () => html`<a href="${"maps/x.html"}">a</a>`],
+    ["a scheme prefix", () => html`<a href="a:${"x"}">a</a>`],
+    ["a space before the folder", () => html`<a href=" maps/${"x"}">a</a>`],
+    ["a scheme before the folder", () => html`<a href="javascript:maps/${"x"}">a</a>`],
+    ["a ../ prefix", () => html`<a href="../${"x"}">a</a>`],
+  ])("S002 FR-2, NFR-1: rejects %s", (_name, render) => {
+    expect(render).toThrow(BAD);
+  });
+});

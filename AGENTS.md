@@ -13,7 +13,9 @@ Stack: Node 26, pnpm 12, TypeScript 7 (strict), Zod 4, Vitest, Biome. ESM only.
 - Update snapshots, only when the output change is intended: `pnpm test -u`
 - Run the CLI from source: `pnpm breachmap validate fixtures/valid.json` (also `render`, `new`)
 - Bundle the published CLI to `packages/cli/dist/cli.js`: `pnpm build`
-- CI: `.github/workflows/ci.yml` (check, build, gallery valid and maps up to date). Release:
+- Build the gallery site (landing page + maps) into `site/`: `pnpm site` (`scripts/build-site.ts`)
+- CI: `.github/workflows/ci.yml` (check, build, gallery valid, maps up to date, site builds; on
+  `main` a clean job rebuilds `site/` and deploys it to GitHub Pages). Release:
   `.github/workflows/release.yml` publishes `packages/cli` on a `v*` tag with npm provenance.
 - Score an eval run (spec section 10): `pnpm eval:score evals/runs/<date>`. Grades for E3/E4 come
   from the `eval-grader` subagent in `evals/runs/<date>/grades/<id>.json`; results go to `evals/results/`.
@@ -63,9 +65,9 @@ randomness or Node built-ins in schema/core/render (render may use `node:crypto`
   every value and throws (a coding bug, caught by tests) when a value or nested `html` sits outside
   a strict grammar of the template text before it: `<` only starts a tag; no comments or `<!`
   except a leading `<!doctype html>`; values only in text or a double-quoted value of an allowed
-  attribute (`href` must be `https://` or `#…`); `<script>`/`<style>` only in a full page before
-  any svg, holding only value-free templates; nested `html` only in plain text, never leaving a
-  tag or svg open. Any meta refresh throws.
+  attribute (`href` must be `https://`, `#…`, or follow a fixed `folder/` like `maps/`);
+  `<script>`/`<style>` only in a full page before any svg, holding only value-free templates;
+  nested `html` only in plain text, never leaving a tag or svg open. Any meta refresh throws.
 - End relative imports in `.ts` and use only erasable TypeScript (no `enum`, `namespace`),
   so Node runs the sources directly (`node scripts/check-arch.ts`).
 - Put tests next to the code as `*.test.ts`.
