@@ -2,7 +2,9 @@
 
 Turn a real security incident into a sourced, interactive attack map: one offline HTML file.
 
-![A Breachmap map of the xz Utils backdoor](docs/demo.gif)
+**[Try it live](https://shujasn.github.io/BreachMap/)**: five real incidents, no install.
+
+![The Breachmap gallery and the xz Utils backdoor map](docs/demo.gif)
 
 ## Setup
 
@@ -36,6 +38,7 @@ No agent? `pnpm breachmap new my-incident` writes a starter file to fill in.
 - `pnpm check`: lint, type-check and test everything
 - `pnpm breachmap <command>`: run the CLI from source (`validate`, `render`, `new`)
 - `pnpm build`: bundle the CLI
+- `pnpm site`: build the gallery site into `site/`
 
 ## License
 
