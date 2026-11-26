@@ -4,6 +4,7 @@ Turns a validated incident into one offline HTML file. Pure and deterministic.
 
 ## Files
 - `render.ts`: `render(input, { version })` validates with core and returns `Result<string, Issue[]>`.
+  It refuses maps over 250 KB (ADR 0004).
 - `page.ts`: the page: head with CSP, header, flow, impact, defenses, sources, footer.
 - `diagram.ts`: the SVG sequence diagram from core `layout()`.
 - `assets.ts`: the fixed CSS and script. Their sha256 hashes go into the CSP.

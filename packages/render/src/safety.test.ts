@@ -19,22 +19,23 @@ const xssPage = renderOk(xss);
 const doc = parse(xssPage);
 
 // Builds a large incident: 6 entities, 60 steps, 40 sources and 30 defenses at max text lengths.
-function big() {
+function big(fill?: string) {
+  const text = (letter: string, n: number) => (fill ?? letter).repeat(n);
   const data = load("valid.json");
   const kinds = ["attacker", "victim", "system", "system", "system", "system"];
-  data.entities = kinds.map((kind, i) => ({ id: `entity-${i}`, name: "N".repeat(80), kind }));
+  data.entities = kinds.map((kind, i) => ({ id: `entity-${i}`, name: text("N", 80), kind }));
   data.sources = Array.from({ length: 40 }, (_, i) => ({
     id: `source-${i}`,
     url: `https://example.com/source/${i}`,
-    title: "T".repeat(300),
-    publisher: "P".repeat(120),
+    title: text("T", 300),
+    publisher: text("P", 120),
     type: i % 2 ? "advisory" : "news",
     retrievedAt: "2026-11-24",
   }));
   data.steps = Array.from({ length: 60 }, (_, i) => ({
     id: `step-${i}`,
-    title: "S".repeat(120),
-    description: "D ".repeat(300),
+    title: text("S", 120),
+    description: text("D", 600),
     phase: "execution",
     techniqueId: "T1059.001",
     from: `entity-${i % 6}`,
@@ -42,10 +43,10 @@ function big() {
     confidence: "reported",
     sourceIds: [`source-${i % 40}`, `source-${(i + 7) % 40}`],
   }));
-  data.impact = { description: "I".repeat(600), sourceIds: ["source-0"] };
+  data.impact = { description: text("I", 600), sourceIds: ["source-0"] };
   data.defenses = Array.from({ length: 30 }, (_, i) => ({
     id: `defense-${i}`,
-    action: "A".repeat(300),
+    action: text("A", 300),
     stepIds: [0, 1, 2, 3, 4].map((k) => `step-${(i + k * 12) % 60}`),
     sourceIds: [`source-${i}`],
   }));
@@ -141,5 +142,19 @@ describe("NFR-4, NFR-7: budget for a large incident (6 entities, 60 steps, 40 so
     const start = performance.now();
     renderOk(input);
     expect(performance.now() - start).toBeLessThan(1000);
+  });
+});
+
+describe("NFR-4: the size budget is enforced", () => {
+  it("refuses a valid incident whose map would be over 250 KB, with a fix", () => {
+    const result = render(big("漢"), { version: "0.1.0" });
+    expect(result.ok).toBe(false);
+    expect(result.ok ? [] : result.error).toEqual([
+      {
+        path: "(root)",
+        message: expect.stringMatching(/^makes a \d+ KB map; the limit is 250 KB$/),
+        fix: "Shorten long text, or split the incident into smaller ones.",
+      },
+    ]);
   });
 });

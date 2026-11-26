@@ -138,6 +138,7 @@ It calls `validate()` first and refuses invalid input (FR-7).
 - **CSP** in a `<meta>` tag: `default-src 'none'; script-src 'sha256-…'; style-src 'sha256-…';
   base-uri 'none'; form-action 'none'`. Also `referrer: no-referrer` and DNS prefetch off.
   Hashes use `node:crypto`, the only Node import allowed in render.
+- **Size (NFR-4, ADR 0004):** a map over 250 KB is refused with an `Issue` and a fix.
 - **Determinism (NFR-2):** output depends only on the incident and `meta.version`.
   No clock, no random values, no sorting by unstable keys.
 
